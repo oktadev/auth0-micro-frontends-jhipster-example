@@ -1,0 +1,19 @@
+{
+  "generator-jhipster": {
+    "appsFolders": ["gateway", "blog", "store"],
+    "clusteredDbApps": ["store"],
+    "deploymentType": "kubernetes",
+    "directoryPath": "../",
+    "dockerPushCommand": "docker push",
+    "dockerRepositoryName": "mraible",
+    "ingressDomain": "",
+    "istio": false,
+    "jwtSecretKey": "NTM3YTg2ODY4MTViMTU2MDBmOTczMWYwMzUzMTI3YTBlODgxZTk3MTM5YjliNzMzNTZiYWE2NmY2Y2IwYzdkNWViMWY5ZDNiZWUzZDhlYTFkNDE0ZTljMjI5OTlmZjRiNzM1OQ==",
+    "kubernetesNamespace": "demo",
+    "kubernetesServiceType": "LoadBalancer",
+    "kubernetesStorageClassName": "",
+    "kubernetesUseDynamicStorage": false,
+    "monitoring": "no",
+    "serviceDiscoveryType": "eureka"
+  }
+}
