@@ -20,18 +20,16 @@ org:
       packages-to-scan: com.okta.developer.blog.config.neo4j
       installed-by: blog
 
-eureka:
-  client:
-    enabled: false
-  instance:
-    appname: blog
-    instanceId: blog:${spring.application.instance-id:${random.value}}
-
 spring:
   application:
     name: blog
   cloud:
-    config:
+    consul:
+      discovery:
+        enabled: false
+        instanceId: ${spring.application.name}:${spring.application.instance-id:${random.value}}
+      config:
+        enabled: false
       enabled: false
   jackson:
     serialization:

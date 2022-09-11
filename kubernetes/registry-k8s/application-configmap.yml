@@ -7,27 +7,11 @@ metadata:
 data:
   application.yml: |-
     configserver:
-      name:  JHipster Registry
-      status: Connected to the JHipster Registry running in Kubernetes
-    eureka:
-      client:
-        initial-instance-info-replication-interval-seconds: 15
-        instance-info-replication-interval-seconds: 15
-        registry-fetch-interval-seconds: 15
-        fetch-registry: true
-        register-with-eureka: true
-        eureka-service-url-poll-interval-seconds: 15
-      instance:
-        lease-renewal-interval-in-seconds: 10
-        registry-default-open-for-traffic-count: 0
+      name: Consul
+      status: Connected to Consul running in Kubernetes
     jhipster:
       security:
         authentication:
           jwt:
-            base64-secret: NTM3YTg2ODY4MTViMTU2MDBmOTczMWYwMzUzMTI3YTBlODgxZTk3MTM5YjliNzMzNTZiYWE2NmY2Y2IwYzdkNWViMWY5ZDNiZWUzZDhlYTFkNDE0ZTljMjI5OTlmZjRiNzM1OQ==
+            base64-secret: YmEyNGJjNWE1YWE3MmY4OTM4ZjY5ZTJkMjFiN2MzOTI1NzNhY2MwNjMwNDQzM2Q0Y2UyOWVkZjQ4YmUwM2VjODdkNDBjZDI3MmViNTg2Y2U1OGNiODU5ZWZhODRhMWRhZTE1Mg==
   # app specific configuration
-  jhipster-registry.yml: |-
-    eureka:
-      client:
-        service-url:
-          defaultZone: http://admin:${spring.security.user.password}@jhipster-registry-0.jhipster-registry.demo.svc.cluster.local:8761/eureka/,http://admin:${spring.security.user.password}@jhipster-registry-1.jhipster-registry.demo.svc.cluster.local:8761/eureka/

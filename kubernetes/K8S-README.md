@@ -60,26 +60,6 @@ $ kubectl set image deployment/<app-name>-app <app-name>=<new-image>  -n demo
 Using livenessProbes and readinessProbe allow you to tell Kubernetes about the state of your applications, in order to ensure availablity of your services. You will need minimum 2 replicas for every application deployment if you want to have zero-downtime deployed.
 This is because the rolling upgrade strategy first stops a running replica in order to place a new. Running only one replica, will cause a short downtime during upgrades.
 
-## JHipster registry
-
-The registry is deployed using a headless service in kubernetes, so the primary service has no IP address, and cannot get a node port. You can create a secondary service for any type, using:
-
-```
-$ kubectl expose service jhipster-registry --type=NodePort --name=exposed-registry -n demo
-```
-
-and explore the details using
-
-```
-$ kubectl get svc exposed-registry -n demo
-```
-
-For scaling the JHipster registry, use
-
-```
-$ kubectl scale statefulset jhipster-registry --replicas 3 -n demo
-```
-
 ## Troubleshooting
 
 > my apps doesn't get pulled, because of 'imagePullBackof'

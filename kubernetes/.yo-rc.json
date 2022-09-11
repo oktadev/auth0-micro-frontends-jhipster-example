@@ -8,12 +8,13 @@
     "dockerRepositoryName": "mraible",
     "ingressDomain": "",
     "istio": false,
-    "jwtSecretKey": "NTM3YTg2ODY4MTViMTU2MDBmOTczMWYwMzUzMTI3YTBlODgxZTk3MTM5YjliNzMzNTZiYWE2NmY2Y2IwYzdkNWViMWY5ZDNiZWUzZDhlYTFkNDE0ZTljMjI5OTlmZjRiNzM1OQ==",
+    "jwtSecretKey": "YmEyNGJjNWE1YWE3MmY4OTM4ZjY5ZTJkMjFiN2MzOTI1NzNhY2MwNjMwNDQzM2Q0Y2UyOWVkZjQ4YmUwM2VjODdkNDBjZDI3MmViNTg2Y2U1OGNiODU5ZWZhODRhMWRhZTE1Mg==",
     "kubernetesNamespace": "demo",
     "kubernetesServiceType": "LoadBalancer",
     "kubernetesStorageClassName": "",
-    "kubernetesUseDynamicStorage": false,
+    "kubernetesUseDynamicStorage": true,
     "monitoring": "no",
-    "serviceDiscoveryType": "eureka"
+    "monorepository": true,
+    "serviceDiscoveryType": "consul"
   }
 }

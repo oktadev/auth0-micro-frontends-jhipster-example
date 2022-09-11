@@ -296,8 +296,14 @@ spec:
             name: store-mongodb-init
         - name: configdir
           emptyDir: {}
-        - name: datadir
-          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: "1Gi"
 ---
 # Headless service for DNS record
 apiVersion: v1

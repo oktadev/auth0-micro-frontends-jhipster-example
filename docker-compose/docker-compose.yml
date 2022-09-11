@@ -5,15 +5,14 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
-      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_R2DBC_URL=r2dbc:postgresql://gateway-postgresql:5432/gateway
       - SPRING_LIQUIBASE_URL=jdbc:postgresql://gateway-postgresql:5432/gateway
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=web_app
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=web_app
       - JHIPSTER_SLEEP=80
-      - JHIPSTER_REGISTRY_PASSWORD=admin
     ports:
       - "8080:8080"
   gateway-postgresql:
@@ -29,14 +28,13 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
-      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_NEO4J_URI=bolt://blog-neo4j:7687
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
       - JHIPSTER_SLEEP=60
-      - JHIPSTER_REGISTRY_PASSWORD=admin
   blog-neo4j:
     image: neo4j:4.4.9
     environment:
@@ -48,43 +46,32 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
-      - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_DATA_MONGODB_URI=mongodb://store-mongodb:27017/?waitQueueMultiple=1000
       - SPRING_DATA_MONGODB_DATABASE=store
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
       - JHIPSTER_SLEEP=60
-      - JHIPSTER_REGISTRY_PASSWORD=admin
   store-mongodb:
     image: mongo:4.4.15
 
-  jhipster-registry:
-    image: jhipster/jhipster-registry:v7.3.0
-    volumes:
-      - ./central-server-config:/central-config
-    # By default the JHipster Registry runs with the "dev" and "native"
-    # Spring profiles.
-    # "native" profile means the filesystem is used to store data, see
-    # http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html
-    environment:
-      - _JAVA_OPTIONS=-Xmx512m -Xms256m
-      - JHIPSTER_SLEEP=80
-      - SPRING_PROFILES_ACTIVE=dev,oauth2
-      - SPRING_SECURITY_USER_PASSWORD=admin
-      - JHIPSTER_REGISTRY_PASSWORD=admin
-      - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_TYPE=native
-      - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_SEARCH_LOCATIONS=file:./central-config
-      # - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_TYPE=git
-      # - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_URI=https://github.com/jhipster/jhipster-registry/
-      # - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_SEARCH_PATHS=central-config
-      # For Keycloak to work, you need to add '127.0.0.1 keycloak' to your hosts file
-      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
-      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=jhipster-registry
-      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=jhipster-registry
+  consul:
+    image: consul:1.13.1
     ports:
-      - 8761:8761
+      - 8300:8300
+      - 8500:8500
+      - 8600:8600
+    command: consul agent -dev -ui -client 0.0.0.0 -log-level=INFO
+  consul-config-loader:
+    image: jhipster/consul-config-loader:v0.4.1
+    volumes:
+      - ./central-server-config:/config
+    environment:
+      - INIT_SLEEP_SECONDS=5
+      - CONSUL_URL=consul
+      - CONSUL_PORT=8500
   keycloak:
     image: quay.io/keycloak/keycloak:19.0.1
     command: ["start-dev --import-realm"]

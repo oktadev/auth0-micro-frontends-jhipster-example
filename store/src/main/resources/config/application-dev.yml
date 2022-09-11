@@ -20,13 +20,6 @@ logging:
     org.hibernate.SQL: DEBUG
     com.okta.developer.store: DEBUG
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    service-url:
-      defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
-
 spring:
   devtools:
     restart:
@@ -38,13 +31,21 @@ spring:
     serialization:
       indent-output: true
   cloud:
-    config:
-      uri: http://admin:${jhipster.registry.password}@localhost:8761/config
-      # name of the config server's property source (file.yml) that we want to use
-      name: store
-      profile: dev
-      label: main # toggle to switch to a different version of the configuration as stored in git
-      # it can be set to any label, branch or commit of the configuration source Git repository
+    consul:
+      config:
+        fail-fast: false # if not in "prod" profile, do not force to use Spring Cloud Config
+        format: yaml
+        profile-separator: '-'
+      discovery:
+        prefer-ip-address: true
+        tags:
+          - profile=${spring.profiles.active}
+          - version=#project.version#
+          - git-version=${git.commit.id.describe:}
+          - git-commit=${git.commit.id.abbrev:}
+          - git-branch=${git.branch:}
+      host: localhost
+      port: 8500
   data:
     mongodb:
       uri: mongodb://localhost:27017/?waitQueueMultiple=1000
@@ -78,8 +79,6 @@ server:
 # ===================================================================
 
 jhipster:
-  registry:
-    password: admin
   # CORS is disabled by default on microservices, as you should access them through a gateway.
   # If you want to enable it, please uncomment the configuration below.
   # cors:

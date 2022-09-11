@@ -1,0 +1,8 @@
+{
+  "generator-jhipster": {
+    "clientPackageManager": "npm",
+    "dockerCompose": true,
+    "monorepository": true,
+    "packages": ["blog", "store", "gateway"]
+  }
+}

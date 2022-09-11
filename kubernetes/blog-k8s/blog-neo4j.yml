@@ -1,4 +1,16 @@
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: blog-neo4j-pvc
+  namespace: demo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: blog-neo4j
@@ -7,7 +19,7 @@ metadata:
     app: blog-neo4j
 type: Opaque
 data:
-  neo4j-password: NThiYzk1ZjJlYzZhYTMwYzhiMTA3YzRiZjhjZWZhMjM4M2YwNzM5NmFiMDQ1MjdiMjRkOWM2YjU0M2Y4
+  neo4j-password: MjU4NzlmMTI1Yjc0NTg4ZWEwZjA1OTkxZjViOTViMGI2M2NkNmU5N2Y5NmVmOTlhMzM4MmIyNTgyOGU2
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -27,7 +39,8 @@ spec:
     spec:
       volumes:
         - name: data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: blog-neo4j-pvc
       containers:
         - name: neo4j
           image: neo4j:4.4.9

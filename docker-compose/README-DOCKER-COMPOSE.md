@@ -8,7 +8,7 @@ Launch all your infrastructure by running: `docker-compose up -d`.
 
 ### Service registry and configuration server:
 
-- [JHipster Registry](http://localhost:8761)
+- [Consul](http://localhost:8500)
 
 ### Applications and dependencies:
 

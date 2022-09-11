@@ -1,0 +1,39 @@
+{
+  "workspaces": {
+    "packages": [
+      "blog",
+      "store",
+      "gateway"
+    ]
+  },
+  "scripts": {
+    "backend:build-cache": "concurrently npm:backend:build-cache:blog npm:backend:build-cache:store npm:backend:build-cache:gateway",
+    "backend:build-cache:blog": "npm run backend:build-cache --workspace blog --if-present",
+    "backend:build-cache:gateway": "npm run backend:build-cache --workspace gateway --if-present",
+    "backend:build-cache:store": "npm run backend:build-cache --workspace store --if-present",
+    "ci:backend:test": "npm run ci:backend:test --workspaces --if-present",
+    "ci:e2e:package": "npm run ci:docker:build --workspaces --if-present && npm run java:docker --workspaces --if-present",
+    "ci:e2e:prepare": "npm run docker-compose",
+    "ci:e2e:run": "npm run e2e:headless --workspaces --if-present",
+    "ci:e2e:teardown": "docker-compose -f docker-compose/docker-compose.yml down -v",
+    "ci:frontend:test": "npm run ci:frontend:test --workspaces --if-present",
+    "docker-compose": "docker-compose -f docker-compose/docker-compose.yml up -d",
+    "java:docker": "concurrently npm:java:docker:blog npm:java:docker:store npm:java:docker:gateway",
+    "java:docker:arm64": "concurrently npm:java:docker:arm64:blog npm:java:docker:arm64:store npm:java:docker:arm64:gateway",
+    "java:docker:arm64:blog": "npm run java:docker:arm64 --workspace blog --if-present",
+    "java:docker:arm64:gateway": "npm run java:docker:arm64 --workspace gateway --if-present",
+    "java:docker:arm64:store": "npm run java:docker:arm64 --workspace store --if-present",
+    "java:docker:blog": "npm run java:docker --workspace blog --if-present",
+    "java:docker:gateway": "npm run java:docker --workspace gateway --if-present",
+    "java:docker:store": "npm run java:docker --workspace store --if-present",
+    "watch": "concurrently npm:watch:blog npm:watch:store npm:watch:gateway",
+    "watch:blog": "npm run watch --workspace blog --if-present",
+    "watch:gateway": "npm run watch --workspace gateway --if-present",
+    "watch:store": "npm run watch --workspace store --if-present",
+    "webapp:test": "npm run webapp:test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "7.3.0",
+    "rxjs": "7.5.6"
+  }
+}

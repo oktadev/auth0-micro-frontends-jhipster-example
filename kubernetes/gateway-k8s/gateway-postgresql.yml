@@ -1,4 +1,16 @@
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gateway-postgresql-pvc
+  namespace: demo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: gateway-postgresql
@@ -7,7 +19,7 @@ metadata:
     app: gateway-postgresql
 type: Opaque
 data:
-  postgresql-password: NThiYzk1ZjJlYzZhYTMwYzhiMTA3YzRiZjhjZWZhMjM4M2YwNzM5NmFiMDQ1MjdiMjRkOWM2YjU0M2Y4
+  postgresql-password: MjU4NzlmMTI1Yjc0NTg4ZWEwZjA1OTkxZjViOTViMGI2M2NkNmU5N2Y5NmVmOTlhMzM4MmIyNTgyOGU2
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -26,7 +38,8 @@ spec:
     spec:
       volumes:
         - name: data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: gateway-postgresql-pvc
       containers:
         - name: postgres
           image: postgres:14.5

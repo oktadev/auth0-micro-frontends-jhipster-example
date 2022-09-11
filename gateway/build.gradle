@@ -220,8 +220,8 @@ dependencies {
     implementation "org.springframework.retry:spring-retry"
     implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
     implementation "org.springframework.cloud:spring-cloud-starter-bootstrap"
-    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
-    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-consul-discovery"
+    implementation "org.springframework.cloud:spring-cloud-starter-consul-config"
     implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "io.dropwizard.metrics:metrics-core"
     liquibaseRuntime sourceSets.main.compileClasspath
