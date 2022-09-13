@@ -5,20 +5,17 @@ configserver:
 
 jhipster:
   security:
-    authentication:
-      jwt:
-        base64-secret: YzdhY2E2NDc1ZDQyNjgxNWRkZWM2YTlhMzk1NWUyYjljOGJmOTY2ZGNmNjAxZTgyYmY1ZTkyNGRjOTVhZjM5ZTgwYjk5NjE0ZTcyYjU0MWFmNDNmYTNmMjhlZjBmZjAyZWE2Yw==
-    oauth2:
-      audience: https://<your-auth0-domain>/api/v2/
+#    oauth2:
+#      audience: https://<your-auth0-domain>/api/v2/
 
-spring:
-  security:
-    oauth2:
-      client:
-        provider:
-          oidc:
-            issuer-uri: https://<your-auth0-domain>/ # make sure to include the trailing slash!
-        registration:
-          oidc:
-            client-id: <your-client-id>
-            client-secret: <your-client-secret>
+#spring:
+#  security:
+#    oauth2:
+#      client:
+#        provider:
+#          oidc:
+#            issuer-uri: https://<your-auth0-domain>/ # make sure to include the trailing slash!
+#        registration:
+#          oidc:
+#            client-id: <your-client-id>
+#            client-secret: <your-client-secret>
