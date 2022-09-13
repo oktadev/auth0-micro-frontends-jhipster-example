@@ -7,4 +7,16 @@ jhipster:
   security:
     authentication:
       jwt:
-        base64-secret: MmUzYzY4ODRjNTVkODBiNWVmZDI2ZDhmNjg0NjEyZjBmMmVmODMyZTgyZmVkMDZmMzU3YzZhOTE4YzRlZTEzOGJiZmY3MjRkNDFhYmJkZGIyMjliNGY1M2M0ZTU3MjkzOTAzZg==
+        base64-secret: YzdhY2E2NDc1ZDQyNjgxNWRkZWM2YTlhMzk1NWUyYjljOGJmOTY2ZGNmNjAxZTgyYmY1ZTkyNGRjOTVhZjM5ZTgwYjk5NjE0ZTcyYjU0MWFmNDNmYTNmMjhlZjBmZjAyZWE2Yw==
+
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: https://<your-auth0-domain>/ # make sure to include the trailing slash!
+        registration:
+          oidc:
+            client-id: <your-client-id>
+            client-secret: <your-client-secret>
