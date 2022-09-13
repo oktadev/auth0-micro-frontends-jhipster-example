@@ -8,6 +8,8 @@ jhipster:
     authentication:
       jwt:
         base64-secret: YzdhY2E2NDc1ZDQyNjgxNWRkZWM2YTlhMzk1NWUyYjljOGJmOTY2ZGNmNjAxZTgyYmY1ZTkyNGRjOTVhZjM5ZTgwYjk5NjE0ZTcyYjU0MWFmNDNmYTNmMjhlZjBmZjAyZWE2Yw==
+    oauth2:
+      audience: https://<your-auth0-domain>/api/v2/
 
 spring:
   security:
