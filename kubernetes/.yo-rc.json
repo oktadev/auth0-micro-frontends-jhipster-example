@@ -8,7 +8,7 @@
     "dockerRepositoryName": "mraible",
     "ingressDomain": "",
     "istio": false,
-    "jwtSecretKey": "YmEyNGJjNWE1YWE3MmY4OTM4ZjY5ZTJkMjFiN2MzOTI1NzNhY2MwNjMwNDQzM2Q0Y2UyOWVkZjQ4YmUwM2VjODdkNDBjZDI3MmViNTg2Y2U1OGNiODU5ZWZhODRhMWRhZTE1Mg==",
+    "jwtSecretKey": "ODFiN2YxMDhmNTRkZTE3Y2NkN2NmNmQzYzBkMGQ4MzJjNzZkYjBkOWE5ZjJiY2RkYTU3ZjY1MmNlMWZjODdhZTQyZTViYzQyNDVjYzg5NjUyNGRkNmE0OGE3NmNkY2UxNzY0ZQ==",
     "kubernetesNamespace": "demo",
     "kubernetesServiceType": "LoadBalancer",
     "kubernetesStorageClassName": "",
