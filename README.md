@@ -113,11 +113,12 @@ If you'd like to use Okta for your identity provider, see [JHipster's documentat
 
 This example uses the following open source libraries:
 
+* [Consul](https://www.consul.io/)
+* [JHipster](https://www.jhipster.tech)
 * [Spring Boot](https://spring.io/projects/spring-boot)
 * [Spring Cloud](https://spring.io/projects/spring-cloud)
 * [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway)
 * [Spring Security](https://spring.io/projects/spring-security)
-* [JHipster](https://www.jhipster.tech)
 
 ## Help
 
