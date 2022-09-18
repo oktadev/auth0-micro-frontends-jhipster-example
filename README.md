@@ -36,8 +36,8 @@ Select **Create Application** in the [Applications section](https://manage.auth0
 
 Switch to the **Settings** tab and configure your application settings:
 
-- Allowed Callback URLs: `\http://localhost:8080/login/oauth2/code/oidc`
-- Allowed Logout URLs: `\http://localhost:8080/`
+- Allowed Callback URLs: `http://localhost:8080/login/oauth2/code/oidc`
+- Allowed Logout URLs: `http://localhost:8080/`
 
 Scroll to the bottom and click **Save Changes**.
 
@@ -60,7 +60,7 @@ exports.onExecutePostLogin = async (event, api) => {
 }
 ```
 
-This code adds the user's roles to a custom claim (prefixed with `\https://www.jhipster.tech/roles`). This claim is mapped to Spring Security authorities in `SecurityUtils.java` in the gateway app.
+This code adds the user's roles to a custom claim (prefixed with `https://www.jhipster.tech/roles`). This claim is mapped to Spring Security authorities in `SecurityUtils.java` in the gateway app.
 
 Select **Deploy** and drag the `Add Roles` action to your Login flow.
 
@@ -105,7 +105,7 @@ cd docker-compose
 docker compose up
 ```
 
-Now, Spring Security will be configured to use Auth0, and Consul will distribute these settings to all your microservices. When everything is started, navigate to `\http://localhost:8080` and click **sign in**. You will be prompted for your Auth0 credentials.
+Now, Spring Security will be configured to use Auth0, and Consul will distribute these settings to all your microservices. When everything is started, navigate to `http://localhost:8080` and click **sign in**. You will be prompted for your Auth0 credentials.
 
 If you'd like to use Okta for your identity provider, see [JHipster's documentation](https://www.jhipster.tech/security/#okta).
 
