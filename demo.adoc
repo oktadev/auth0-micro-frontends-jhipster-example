@@ -36,7 +36,7 @@ idea diff reactive-ms.jdl reactive-mf.jdl
 +
 TIP: The https://plugins.jetbrains.com/plugin/19697-jhipster-jdl[JHipster JDL Plugin] is a handy tool for working with JDL files.
 
-== Build Java microservices with Spring Boot and WebFlux
+=== Build Java microservices with Spring Boot and WebFlux
 
 . To generate a microservices architecture with micro frontend support, run the following command:
 +
@@ -59,7 +59,7 @@ jhipster jdl reactive-mf.jdl --client-framework angularX --monorepository --work
 jhipster jdl reactive-mf.jdl --client-framework vue --monorepository --workspaces
 ----
 
-== Run your reactive Spring Boot microservices
+=== Run your reactive Spring Boot microservices
 
 . When the process is complete, cd into the `gateway` directory and start Keycloak and Consul using Docker Compose.
 +
@@ -89,7 +89,7 @@ npm run docker:db:up
 
 . Refresh the gateway app to see menu items.
 
-== Zero turnaround development that sparks joy
+=== Zero turnaround development that sparks joy
 
 What if you want to work on the UI and have zero turnaround that sparks joy? ✨🤗
 
