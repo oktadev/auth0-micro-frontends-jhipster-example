@@ -3,7 +3,7 @@
 :toc: macro
 :source-highlighter: highlight.js
 
-= Use React and Spring Boot to Build a Simple CRUD App
+= Build Micro Frontends for Java Microservices
 
 Today, I'll show you how to build a microservices and micro frontends architecture with JHipster. You'll build a gateway with Spring Cloud Gateway. Then, you'll create a blog microservice and a store microservice, each with its own database. Each app will also contain a micro frontend.
 
