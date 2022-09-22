@@ -45,18 +45,18 @@ TIP: The https://plugins.jetbrains.com/plugin/19697-jhipster-jdl[JHipster JDL Pl
 jhipster jdl reactive-mf.jdl --monorepository --workspaces
 ----
 
-. If you want to use Angular, you can pass in `--client-framework angularX` to override the JDL value. For example:
+. If you want to use Angular, append `--client-framework angularX` to override the JDL value:
 +
 [source,shell]
 ----
-jhipster jdl reactive-mf.jdl --client-framework angularX --monorepository --workspaces
+--client-framework angularX
 ----
 
 . If you'd rather try out Vue, use the following:
 +
 [source,shell]
 ----
-jhipster jdl reactive-mf.jdl --client-framework vue --monorepository --workspaces
+--client-framework vue
 ----
 
 === Run your reactive Spring Boot microservices
@@ -65,6 +65,7 @@ jhipster jdl reactive-mf.jdl --client-framework vue --monorepository --workspace
 +
 [source,shell]
 ----
+cd gateway
 docker compose -f src/main/docker/keycloak.yml up -d
 docker compose -f src/main/docker/consul.yml up -d
 ----
@@ -97,7 +98,7 @@ What if you want to work on the UI and have zero turnaround that sparks joy? ✨
 
 . Modify the code in `gateway/src/main/webapp/app/modules/home/home.tsx` to make a quick change. For example, add the following HTML below the `<h2>`.
 +
-[source,jsx]
+[source,html]
 ----
 <h3 className="text-primary">
   Hi, I'm a quick edit!
@@ -140,11 +141,12 @@ npm run java:docker
 +
 TIP: For Apple Silicon, use `npm run java:docker:arm64`.
 
-. Navigate to the `docker-compose` directory and start all the containers.
+. Navigate to the `docker-compose` directory, stop the existing containers, then start all the containers.
 +
 [source,shell]
 ----
 cd docker-compose
+docker stop $(docker ps -a -q);
 docker compose up
 ----
 
@@ -202,7 +204,7 @@ exports.onExecutePostLogin = async (event, api) => {
 +
 CAUTION: Want to have all these steps automated for you? Vote for https://github.com/auth0/auth0-cli/issues/351[issue #351] in the Auth0 CLI project.
 
-. Edit `docker-compose/central-server-config/application.yml` and append the following YAML block to add your Auth0 settings.
+. Edit `docker-compose/central-server-config/application.yml` and append the following YAML block to add your Auth0 settings. [`jh-oidc`]
 +
 [source,yaml]
 ----
@@ -210,7 +212,7 @@ jhipster:
   security:
     ...
     oauth2:
-      audience: https://dev-06bzs1cu.us.auth0.com/api/v2/
+      audience: https://<your-auth0-domain>/api/v2/
 spring:
   security:
     oauth2:
