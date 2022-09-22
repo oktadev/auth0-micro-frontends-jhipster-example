@@ -1,0 +1,279 @@
+:experimental:
+:commandkey: &#8984;
+:toc: macro
+:source-highlighter: highlight.js
+
+= Build Micro Frontends for Java Microservices
+
+Today, I'll show you how to build a microservices and micro frontends architecture with JHipster. You'll build a gateway with Spring Cloud Gateway. Then, you'll create a blog microservice and a store microservice, each with its own database. Each app will also contain a micro frontend.
+
+**Prerequisites**:
+
+- https://sdkman.io/[Java] 11+
+- https://nodejs.com/[Node.js] 16+
+- https://www.docker.com/products/docker-desktop/[Docker Desktop]
+- https://www.jhipster.tech/installation/[JHipster] 7.9.3
+
+toc::[]
+
+== Micro frontends in action with JHipster
+
+1. Run the following command to create a new directory for your micro frontends project:
++
+[source,shell]
+----
+take micro-frontends-jhipster
+----
+
+2. Download both the `reactive-ms.jdl` and `reactive-mf.jdl` files and compare them in IntelliJ IDEA. You'll need IDEA's https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html[Command-line Launcher] for the `idea` command to work.
++
+[source,shell]
+----
+jhipster download reactive-ms.jdl
+jhipster download reactive-mf.jdl
+idea diff reactive-ms.jdl reactive-mf.jdl
+----
++
+TIP: The https://plugins.jetbrains.com/plugin/19697-jhipster-jdl[JHipster JDL Plugin] is a handy tool for working with JDL files.
+
+=== Build Java microservices with Spring Boot and WebFlux
+
+. To generate a microservices architecture with micro frontend support, run the following command:
++
+[source,shell]
+----
+jhipster jdl reactive-mf.jdl --monorepository --workspaces
+----
+
+. If you want to use Angular, append `--client-framework angularX` to override the JDL value:
++
+[source,shell]
+----
+--client-framework angularX
+----
+
+. If you'd rather try out Vue, use the following:
++
+[source,shell]
+----
+--client-framework vue
+----
+
+=== Run your reactive Spring Boot microservices
+
+. When the process is complete, cd into the `gateway` directory and start Keycloak and Consul using Docker Compose.
++
+[source,shell]
+----
+cd gateway
+docker compose -f src/main/docker/keycloak.yml up -d
+docker compose -f src/main/docker/consul.yml up -d
+----
+
+. Run `./gradlew` (or `npm run app:start` if you prefer npm commands).
+
+. Open your favorite browser to `\http://localhost:8080`, and log in with the credentials displayed on the page.
+
+. Show missing links in entities menu.
+
+. Start the `blog` by opening a terminal and navigating to its directory. Then, start its database with Docker and the app with Gradle.
++
+[source,shell]
+----
+npm run docker:db:up
+./gradlew
+----
+
+. Open a new terminal and do the same for the `store` microservice.
+
+. Verify everything is started using Consul at `\http://localhost:8500`.
+
+. Refresh the gateway app to see menu items.
+
+=== Zero turnaround development that sparks joy
+
+What if you want to work on the UI and have zero turnaround that sparks joy? ✨🤗
+
+. In the gateway app, run `npm start`. This command will run the UI on a web server, open a browser window to `\http://localhost:9000`, and use https://browsersync.io/[Browsersync] to keep your browser in sync with your code.
+
+. Modify the code in `gateway/src/main/webapp/app/modules/home/home.tsx` to make a quick change. For example, add the following HTML below the `<h2>`.
++
+[source,html]
+----
+<h3 className="text-primary">
+  Hi, I'm a quick edit!
+</h3>
+----
+
+. You'll see this change immediately appear within your browser. Remove it, and it'll disappear right away too.
+
+. Open another terminal, navigate into the `store` directory, and run `npm start`.
+
+. Modify files in the `store/src/main/webapp/app/entities/store/product` directory, and you'll see the changes in your browser immediately.
++
+For example, change the wrapper `<div>` in `product.tsx` to have a background color:
++
+[source,html]
+----
+<div className="bg-info">
+----
++
+The UI will change before you can kbd:[Cmd+Tab] back to your browser.
+
+NOTE: The backend has quick turnaround abilities too, thanks to https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools[Spring Boot devtools]. If you modify a backend class, recompiling it will cause Spring Boot to reload your component lickety-split. It's pretty slick!
+
+=== A look under the hood of micro frontends
+
+When you're learning concepts like micro frontends, it's often helpful to look at the code that makes things work.
+
+The gateway's `webpack.microfrontend.js` handles setting up the `@blog` and `@store` remotes and specifying the shared dependencies and components between apps.
+
+The blog's `webpack.microfrontend.js` looks similar, except that it exposes its `remoteEntry.js`, menu items, and routes.
+
+== Build and run with Docker
+
+. Build Docker images for each application by running the following command from the root directory.
++
+[source,shell]
+----
+npm run java:docker
+----
++
+TIP: For Apple Silicon, use `npm run java:docker:arm64`.
+
+. Navigate to the `docker-compose` directory, stop the existing containers, then start all the containers.
++
+[source,shell]
+----
+cd docker-compose
+docker stop $(docker ps -a -q);
+docker compose up
+----
+
+. To make Keycloak work, you must add the following line to your hosts file (`/etc/hosts` on Mac/Linux, `c:\Windows\System32\Drivers\etc\hosts` on Windows).
++
+----
+127.0.0.1  keycloak
+----
+
+. Prove everything works at `\http://localhost:8500`
+
+. Run Cypress e2e tests:
++
+[source,shell]
+----
+npm run e2e -ws
+----
+
+== Switch identity providers
+
+JHipster ships with Keycloak when you choose OAuth 2.0 / OIDC as the authentication type. However, you can easily change it to another identity provider, like Auth0!
+
+. First, register a regular web application. Log in to your Auth0 account (or https://auth0.com/signup[sign up] if you don't have an account). You should have a unique domain like `dev-xxx.us.auth0.com`
+
+. Select *Create Application* in the https://manage.auth0.com/#/applications[Applications section]. Use a name like `Micro Frontends`, select *Regular Web Applications*, and click *Create*.
+
+. Switch to the *Settings* tab and configure your application settings:
+
+- Allowed Callback URLs: `\http://localhost:8080/login/oauth2/code/oidc`
+- Allowed Logout URLs: `\http://localhost:8080/`
++
+Scroll to the bottom and click *Save Changes*.
+
+. In the https://manage.auth0.com/#/roles[roles] section, create new roles named `ROLE_ADMIN` and `ROLE_USER`.
+
+. Create a new user account in the https://manage.auth0.com/#/users[users] section. Click the *Role* tab to assign the roles you just created to the new account.
++
+IMPORTANT: Make sure your new user's email is verified before attempting to log in!
+
+. Navigate to  **Actions** > **Flows** and select **Login**. Create a new action named `Add Roles` and use the default trigger and runtime. Change the `onExecutePostLogin` handler to be as follows:
++
+[source,js]
+----
+exports.onExecutePostLogin = async (event, api) => {
+  const namespace = 'https://www.jhipster.tech';
+  if (event.authorization) {
+    api.idToken.setCustomClaim('preferred_username', event.user.email);
+    api.idToken.setCustomClaim(`${namespace}/roles`, event.authorization.roles);
+    api.accessToken.setCustomClaim(`${namespace}/roles`, event.authorization.roles);
+  }
+}
+----
+
+. Select **Deploy** and drag the `Add Roles` action to your Login flow.
++
+CAUTION: Want to have all these steps automated for you? Vote for https://github.com/auth0/auth0-cli/issues/351[issue #351] in the Auth0 CLI project.
+
+. Edit `docker-compose/central-server-config/application.yml` and append the following YAML block to add your Auth0 settings. [`jh-oidc`]
++
+[source,yaml]
+----
+jhipster:
+  security:
+    ...
+    oauth2:
+      audience: https://<your-auth0-domain>/api/v2/
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: https://<your-auth0-domain>/ # make sure to include the trailing slash!
+        registration:
+          oidc:
+            client-id: <your-client-id>
+            client-secret: <your-client-secret>
+----
+
+. Stop all your Docker containers with kbd:[Ctrl+C] and start them again.
++
+[source,shell]
+----
+docker compose up
+----
+
+. When everything is started, navigate to `\http://localhost:8080` and click **sign in**. You will be prompted for your Auth0 credentials.
+
+If you'd like to use Okta for your identity provider, see https://www.jhipster.tech/security/#okta[JHipster's documentation].
+
+[TIP]
+====
+You can configure JHipster quickly with the https://cli.okta.com[Okta CLI]:
+[source,shell]
+----
+okta apps create jhipster
+----
+====
+
+== Deploy with Kubernetes
+
+The JDL you used to generate this microservices stack has a section at the bottom for deploying to Kubernetes.
+
+----
+deployment {
+  deploymentType kubernetes
+  appsFolders [gateway, blog, store]
+  clusteredDbApps [store]
+  kubernetesNamespace demo
+  kubernetesUseDynamicStorage true
+  kubernetesStorageClassName ""
+  serviceDiscoveryType consul
+  dockerRepositoryName "mraible"
+}
+----
+
+If you have a Kubernetes cluster created, you can deploy to its `demo` namespace using the following command.
+
+[source,shell]
+----
+./kubectl-apply.sh -f
+----
+
+== Have fun with Micro Frontends and JHipster!
+
+I hope you enjoyed this demo, and it helped you understand how to build better microservice architectures with micro frontends.
+
+☕️ Find the code on GitHub: https://github.com/oktadev/auth0-micro-frontends-jhipster-example[@oktadev/auth0-micro-frontends-jhipster-example]
+
+🤓 Read the blog post: TBD[Micro Frontends for Java Microservices]
