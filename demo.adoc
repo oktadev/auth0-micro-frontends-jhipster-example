@@ -72,6 +72,8 @@ docker compose -f src/main/docker/consul.yml up -d
 
 . Run `./gradlew` (or `npm run app:start` if you prefer npm commands).
 
+. Open the root directory in IntelliJ IDEA and view each project's code structure.
+
 . Open your favorite browser to `\http://localhost:8080`, and log in with the credentials displayed on the page.
 
 . Show missing links in entities menu.
