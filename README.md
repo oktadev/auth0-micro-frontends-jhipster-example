@@ -1,6 +1,6 @@
 # Micro Frontends for Java Microservices Example
 
-This example uses JHipster 7 to generate a micro frontends and reactive microservice architecture. See [Quickly Create Micro Frontends for Java Microservices][blog] to see how it was built.
+This example uses JHipster 7 to generate a micro frontends and reactive microservice architecture. See [Micro Frontends for Java Microservices][blog] to see how it was built.
 
 **Prerequisites:** 
 
@@ -128,4 +128,4 @@ Please post any questions as comments on [this example's blog post][blog], or on
 
 Apache 2.0, see [LICENSE](LICENSE).
 
-[blog]: https://developer.okta.com/blog/2022/09/26/micro-frontends-java-microservices
+[blog]: https://auth0.com/blog/micro-frontends-for-java-microservices/
