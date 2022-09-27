@@ -18,14 +18,21 @@ toc::[]
 
 == Micro frontends in action with JHipster
 
-1. Run the following command to create a new directory for your micro frontends project:
+. Install JHipster 7:
++
+[source,shell]
+----
+npm i -g generator-jhipster@7
+----
+
+. Run the following command to create a new directory for your micro frontends project:
 +
 [source,shell]
 ----
 take micro-frontends-jhipster
 ----
 
-2. Download both the `reactive-ms.jdl` and `reactive-mf.jdl` files and compare them in IntelliJ IDEA. You'll need IDEA's https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html[Command-line Launcher] for the `idea` command to work.
+. Download both the `reactive-ms.jdl` and `reactive-mf.jdl` files and compare them in IntelliJ IDEA. You'll need IDEA's https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html[Command-line Launcher] for the `idea` command to work.
 +
 [source,shell]
 ----
@@ -278,4 +285,4 @@ I hope you enjoyed this demo, and it helped you understand how to build better m
 
 ☕️ Find the code on GitHub: https://github.com/oktadev/auth0-micro-frontends-jhipster-example[@oktadev/auth0-micro-frontends-jhipster-example]
 
-🤓 Read the blog post: TBD[Micro Frontends for Java Microservices]
+🤓 Read the blog post: https://auth0.com/blog/micro-frontends-for-java-microservices/[Micro Frontends for Java Microservices]
