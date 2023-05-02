@@ -167,7 +167,7 @@ docker compose up
 
 . Prove everything works at `\http://localhost:8500`
 
-. Run Cypress e2e tests:
+. Run Cypress e2e tests from the root directory:
 +
 [source,shell]
 ----
@@ -213,7 +213,7 @@ exports.onExecutePostLogin = async (event, api) => {
 +
 CAUTION: Want to have all these steps automated for you? Vote for https://github.com/auth0/auth0-cli/issues/351[issue #351] in the Auth0 CLI project.
 
-. Edit `docker-compose/central-server-config/application.yml` and append the following YAML block to add your Auth0 settings. [`jh-oidc`]
+. Edit `docker-compose/central-server-config/application.yml` and append the following YAML block to add your Auth0 settings. [`jh-oidc-a0`]
 +
 [source,yaml]
 ----
