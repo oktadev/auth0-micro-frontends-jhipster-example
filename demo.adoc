@@ -219,7 +219,6 @@ CAUTION: Want to have all these steps automated for you? Vote for https://github
 ----
 jhipster:
   security:
-    ...
     oauth2:
       audience: https://<your-auth0-domain>/api/v2/
 spring:
