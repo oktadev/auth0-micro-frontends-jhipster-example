@@ -9,20 +9,20 @@ Today, I'll show you how to build a microservices and micro frontends architectu
 
 **Prerequisites**:
 
-- https://sdkman.io/[Java] 11+
-- https://nodejs.com/[Node.js] 16+
+- https://sdkman.io/[Java] 17+
+- https://nodejs.com/[Node.js] 18+
 - https://www.docker.com/products/docker-desktop/[Docker Desktop]
-- https://www.jhipster.tech/installation/[JHipster] 7.9.3
+- https://www.jhipster.tech/installation/[JHipster] 8
 
 toc::[]
 
 == Micro frontends in action with JHipster
 
-. Install JHipster 7:
+. Install JHipster 8:
 +
 [source,shell]
 ----
-npm i -g generator-jhipster@7
+npm i -g generator-jhipster@8
 ----
 
 . Run the following command to create a new directory for your micro frontends project:
@@ -56,7 +56,7 @@ jhipster jdl reactive-mf.jdl --monorepository --workspaces
 +
 [source,shell]
 ----
---client-framework angularX
+--client-framework angular
 ----
 
 . If you'd rather try out Vue, use the following:
@@ -177,6 +177,22 @@ npm run e2e -ws
 == Switch identity providers
 
 JHipster ships with Keycloak when you choose OAuth 2.0 / OIDC as the authentication type. However, you can easily change it to another identity provider, like Auth0!
+
+If you're a command line fan, you can use the [Auth0 CLI](https://github.com/auth0/auth0-cli#installation) to register your JHipster application.
+
+```shell
+auth0 apps create \
+  --name "Micro Frontends" \
+  --description "Micro Frontends with JHipster" \
+  --type regular \
+  --callbacks http://localhost:8080/login/oauth2/code/oidc \
+  --logout-urls http://localhost:8080 \
+  --reveal-secrets
+
+// todo: add roles, user, and an action
+```
+
+If you prefer a visual experience, follow the instructions below:
 
 . First, register a regular web application. Log in to your Auth0 account (or https://auth0.com/signup[sign up] if you don't have an account). You should have a unique domain like `dev-xxx.us.auth0.com`
 
