@@ -68,13 +68,14 @@ jhipster jdl reactive-mf.jdl --monorepository --workspaces
 
 === Run your reactive Spring Boot microservices
 
-. When the process is complete, cd into the `gateway` directory and start Keycloak and Consul using Docker Compose.
+. When the process is complete, cd into the `gateway` directory and start Consul, Keycloak, and PostgreSQL using Docker Compose.
 +
 [source,shell]
 ----
 cd gateway
-docker compose -f src/main/docker/keycloak.yml up -d
 docker compose -f src/main/docker/consul.yml up -d
+docker compose -f src/main/docker/keycloak.yml up -d
+docker compose -f src/main/docker/postgresql.yml up -d
 ----
 
 . Run `./gradlew` (or `npm run app:start` if you prefer npm commands).
@@ -105,13 +106,13 @@ What if you want to work on the UI and have zero turnaround that sparks joy? ✨
 
 . In the gateway app, run `npm start`. This command will run the UI on a web server, open a browser window to `\http://localhost:9000`, and use https://browsersync.io/[Browsersync] to keep your browser in sync with your code.
 
-. Modify the code in `gateway/src/main/webapp/app/modules/home/home.tsx` to make a quick change. For example, add the following HTML below the `<h2>`.
+. Modify the code in `gateway/src/main/webapp/app/modules/home/home.tsx` to make a quick change. For example, add the following HTML below the `<h1>`.
 +
 [source,html]
 ----
-<h3 className="text-primary">
+<h2 className="text-primary">
   Hi, I'm a quick edit!
-</h3>
+</h2>
 ----
 
 . You'll see this change immediately appear within your browser. Remove it, and it'll disappear right away too.
@@ -135,7 +136,7 @@ NOTE: The backend has quick turnaround abilities too, thanks to https://docs.spr
 
 When you're learning concepts like micro frontends, it's often helpful to look at the code that makes things work.
 
-The gateway's `webpack.microfrontend.js` handles setting up the `@blog` and `@store` remotes and specifying the shared dependencies and components between apps.
+The gateway's `webpack.microfrontend.js` handles  specifying the shared dependencies and components between apps. The `src/main/webapp/app/shared/layout/menus/entities.tsx` file contains the menu items for each micro frontend.
 
 The blog's `webpack.microfrontend.js` looks similar, except that it exposes its `remoteEntry.js`, menu items, and routes.
 
