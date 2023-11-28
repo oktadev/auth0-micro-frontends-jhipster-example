@@ -52,7 +52,7 @@ TIP: The https://plugins.jetbrains.com/plugin/19697-jhipster-jdl[JHipster JDL Pl
 jhipster jdl reactive-mf.jdl --monorepository --workspaces
 ----
 
-. If you want to use Angular, append `--client-framework angularX` to override the JDL value:
+. If you want to use Angular, append `--client-framework angular` to override the JDL value:
 +
 [source,shell]
 ----
@@ -178,21 +178,7 @@ npm run e2e -ws
 
 JHipster ships with Keycloak when you choose OAuth 2.0 / OIDC as the authentication type. However, you can easily change it to another identity provider, like Auth0!
 
-If you're a command line fan, you can use the [Auth0 CLI](https://github.com/auth0/auth0-cli#installation) to register your JHipster application.
-
-```shell
-auth0 apps create \
-  --name "Micro Frontends" \
-  --description "Micro Frontends with JHipster" \
-  --type regular \
-  --callbacks http://localhost:8080/login/oauth2/code/oidc \
-  --logout-urls http://localhost:8080 \
-  --reveal-secrets
-
-// todo: add roles, user, and an action
-```
-
-If you prefer a visual experience, follow the instructions below:
+TIP: To use the command line, see the Auth0 CLI sidebar below.
 
 . First, register a regular web application. Log in to your Auth0 account (or https://auth0.com/signup[sign up] if you don't have an account). You should have a unique domain like `dev-xxx.us.auth0.com`
 
@@ -226,9 +212,91 @@ exports.onExecutePostLogin = async (event, api) => {
 ----
 
 . Select **Deploy** and drag the `Add Roles` action to your Login flow.
-+
-CAUTION: Want to have all these steps automated for you? Vote for https://github.com/auth0/auth0-cli/issues/351[issue #351] in the Auth0 CLI project.
 
+.Auth0 CLI
+****
+If you're a command line fan, you can use the https://github.com/auth0/auth0-cli#installation[Auth0 CLI] to register your JHipster application.
+
+[source,shell]
+----
+auth0 apps create \
+  --name "Micro Frontends" \
+  --description "Micro Frontends with JHipster" \
+  --type regular \
+  --callbacks http://localhost:8080/login/oauth2/code/oidc \
+  --logout-urls http://localhost:8080 \
+  --reveal-secrets
+----
+
+Create a test user and save the ID for later:
+
+[source,shell]
+----
+auth0 users create
+----
+
+Create the `USER_ROLE` and `ADMIN_ROLE` roles in Auth0:
+
+[source,shell]
+----
+auth0 roles create --name USER_ROLE --description "User Role for JHipster"
+auth0 roles create --name ADMIN_ROLE --description "Admin Role for JHipster"
+----
+
+Assign the roles to the users you created:
+
+[source,shell]
+----
+auth0 users roles assign
+----
+
+Create a Login Action to assign roles to tokens:
+
+[source,shell]
+----
+auth0 actions create
+----
+
+Select *post-login* for the Trigger. When the editor opens, set the following implementation for the `onExecutePostLogin` function.
+
+[source,js]
+----
+exports.onExecutePostLogin = async (event, api) => {
+  const namespace = 'https://www.jhipster.tech';
+  if (event.authorization) {
+    api.idToken.setCustomClaim('preferred_username', event.user.email);
+    api.idToken.setCustomClaim(`${namespace}/roles`, event.authorization.roles);
+    api.accessToken.setCustomClaim(`${namespace}/roles`, event.authorization.roles);
+  }
+}
+----
+
+List the available actions:
+
+[source,shell]
+----
+auth0 actions list
+----
+
+Note the `DEPLOYED` status is `x`. Go ahead and deploy it using the action ID:
+
+[source,shell]
+----
+auth0 actions deploy <action-id>
+----
+
+Once the action is deployed, you must attach it to the login flow.
+
+[source,shell]
+----
+auth0 api patch "actions/triggers/post-login/bindings" \
+  --data '{"bindings":[{"ref":{"type":"action_id","value":"<action-id>"},"display_name":"Add Roles"}]}'
+----
+
+CAUTION: Want to have all these steps automated for you? Vote for https://github.com/auth0/auth0-cli/issues/351[issue #351] in the Auth0 CLI project.
+****
+
+[start=8]
 . Edit `docker-compose/central-server-config/application.yml` and append the following YAML block to add your Auth0 settings. [`jh-oidc-a0`]
 +
 [source,yaml]
