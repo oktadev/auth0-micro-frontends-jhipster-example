@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Storage } from 'react-jhipster';
 
 const TIMEOUT = 1 * 60 * 1000;
 axios.defaults.timeout = TIMEOUT;

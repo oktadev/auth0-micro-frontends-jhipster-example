@@ -1,10 +1,11 @@
 package com.okta.developer.blog.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import javax.validation.constraints.*;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -15,6 +16,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 /**
  * A Tag.
  */
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Tag.class)
 @Node
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Tag implements Serializable {
@@ -30,8 +32,7 @@ public class Tag implements Serializable {
     @Property("name")
     private String name;
 
-    @Relationship("HAS_POST")
-    @JsonIgnoreProperties(value = { "blog", "tags" }, allowSetters = true)
+    @Relationship(value = "HAS_TAG", direction = Relationship.Direction.INCOMING)
     private Set<Post> posts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -103,7 +104,7 @@ public class Tag implements Serializable {
         if (!(o instanceof Tag)) {
             return false;
         }
-        return id != null && id.equals(((Tag) o).id);
+        return getId() != null && getId().equals(((Tag) o).getId());
     }
 
     @Override

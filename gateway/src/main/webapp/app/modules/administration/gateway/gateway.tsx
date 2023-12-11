@@ -26,7 +26,7 @@ export const GatewayPage = () => {
             </Badge>
             {instance[key]}
           </Badge>
-        </span>
+        </span>,
       );
     });
     return spans;
@@ -34,10 +34,10 @@ export const GatewayPage = () => {
 
   const badgeInfo = info => {
     if (info) {
-      if (info.status === 'UP') {
-        return <Badge color="success">{info.status}</Badge>;
+      if (info.checks && info.checks.filter(check => check.status === 'PASSING').length === info.checks.length) {
+        return <Badge color="success">UP</Badge>;
       } else {
-        return <Badge color="danger">{info.status}</Badge>;
+        return <Badge color="danger">DOWN</Badge>;
       }
     } else {
       return <Badge color="warning">?</Badge>;
@@ -56,7 +56,7 @@ export const GatewayPage = () => {
                     {instance.uri}
                   </a>
                 </td>
-                <td>{badgeInfo(instance.instanceInfo)}</td>
+                <td>{badgeInfo(instance.healthService)}</td>
                 <td>{metadata(instance.metadata)}</td>
               </tr>
             ))}

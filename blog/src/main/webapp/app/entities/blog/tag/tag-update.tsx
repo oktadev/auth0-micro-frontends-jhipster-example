@@ -45,10 +45,12 @@ export const TagUpdate = () => {
     }
   }, [updateSuccess]);
 
+  // eslint-disable-next-line complexity
   const saveEntity = values => {
     const entity = {
       ...tagEntity,
       ...values,
+      posts: mapIdList(values.posts),
     };
 
     if (isNew) {
@@ -63,6 +65,7 @@ export const TagUpdate = () => {
       ? {}
       : {
           ...tagEntity,
+          posts: tagEntity?.posts?.map(e => e.id.toString()),
         };
 
   return (
@@ -101,6 +104,16 @@ export const TagUpdate = () => {
                   minLength: { value: 2, message: translate('entity.validation.minlength', { min: 2 }) },
                 }}
               />
+              <ValidatedField label={translate('blogApp.blogTag.post')} id="tag-post" data-cy="post" type="select" multiple name="posts">
+                <option value="" key="0" />
+                {posts
+                  ? posts.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/blog/tag" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

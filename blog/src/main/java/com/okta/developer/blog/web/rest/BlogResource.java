@@ -4,13 +4,12 @@ import com.okta.developer.blog.domain.Blog;
 import com.okta.developer.blog.repository.BlogRepository;
 import com.okta.developer.blog.repository.UserRepository;
 import com.okta.developer.blog.web.rest.errors.BadRequestAlertException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +27,7 @@ import tech.jhipster.web.util.reactive.ResponseUtil;
  * REST controller for managing {@link com.okta.developer.blog.domain.Blog}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/blogs")
 public class BlogResource {
 
     private final Logger log = LoggerFactory.getLogger(BlogResource.class);
@@ -54,7 +53,7 @@ public class BlogResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new blog, or with status {@code 400 (Bad Request)} if the blog has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/blogs")
+    @PostMapping("")
     public Mono<ResponseEntity<Blog>> createBlog(@Valid @RequestBody Blog blog) throws URISyntaxException {
         log.debug("REST request to save Blog : {}", blog);
         if (blog.getId() != null) {
@@ -90,7 +89,7 @@ public class BlogResource {
      * or with status {@code 500 (Internal Server Error)} if the blog couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/blogs/{id}")
+    @PutMapping("/{id}")
     public Mono<ResponseEntity<Blog>> updateBlog(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody Blog blog
@@ -138,7 +137,7 @@ public class BlogResource {
      * or with status {@code 500 (Internal Server Error)} if the blog couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/blogs/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public Mono<ResponseEntity<Blog>> partialUpdateBlog(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody Blog blog
@@ -193,7 +192,7 @@ public class BlogResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of blogs in body.
      */
-    @GetMapping("/blogs")
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<List<Blog>> getAllBlogs() {
         log.debug("REST request to get all Blogs");
         return blogRepository.findAll().collectList();
@@ -203,7 +202,7 @@ public class BlogResource {
      * {@code GET  /blogs} : get all the blogs as a stream.
      * @return the {@link Flux} of blogs.
      */
-    @GetMapping(value = "/blogs", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<Blog> getAllBlogsAsStream() {
         log.debug("REST request to get all Blogs as a stream");
         return blogRepository.findAll();
@@ -215,8 +214,8 @@ public class BlogResource {
      * @param id the id of the blog to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the blog, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/blogs/{id}")
-    public Mono<ResponseEntity<Blog>> getBlog(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<Blog>> getBlog(@PathVariable("id") String id) {
         log.debug("REST request to get Blog : {}", id);
         Mono<Blog> blog = blogRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(blog);
@@ -228,8 +227,8 @@ public class BlogResource {
      * @param id the id of the blog to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/blogs/{id}")
-    public Mono<ResponseEntity<Void>> deleteBlog(@PathVariable String id) {
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Void>> deleteBlog(@PathVariable("id") String id) {
         log.debug("REST request to delete Blog : {}", id);
         return blogRepository
             .deleteById(id)

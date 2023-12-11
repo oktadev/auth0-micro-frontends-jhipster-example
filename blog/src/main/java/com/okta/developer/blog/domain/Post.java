@@ -1,11 +1,12 @@
 package com.okta.developer.blog.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
-import javax.validation.constraints.*;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -16,6 +17,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 /**
  * A Post.
  */
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Post.class)
 @Node
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Post implements Serializable {
@@ -37,12 +39,10 @@ public class Post implements Serializable {
     @Property("date")
     private Instant date;
 
-    @Relationship(value = "HAS_", direction = Relationship.Direction.INCOMING)
-    @JsonIgnoreProperties(value = { "user" }, allowSetters = true)
+    @Relationship(value = "HAS_BLOG", direction = Relationship.Direction.OUTGOING)
     private Blog blog;
 
-    @Relationship(value = "HAS_POST", direction = Relationship.Direction.INCOMING)
-    @JsonIgnoreProperties(value = { "posts" }, allowSetters = true)
+    @Relationship(value = "HAS_TAG", direction = Relationship.Direction.OUTGOING)
     private Set<Tag> tags = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -127,13 +127,11 @@ public class Post implements Serializable {
 
     public Post addTag(Tag tag) {
         this.tags.add(tag);
-        tag.getPosts().add(this);
         return this;
     }
 
     public Post removeTag(Tag tag) {
         this.tags.remove(tag);
-        tag.getPosts().remove(this);
         return this;
     }
 
@@ -147,7 +145,7 @@ public class Post implements Serializable {
         if (!(o instanceof Post)) {
             return false;
         }
-        return id != null && id.equals(((Post) o).id);
+        return getId() != null && getId().equals(((Post) o).getId());
     }
 
     @Override

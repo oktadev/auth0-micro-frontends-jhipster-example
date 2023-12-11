@@ -1,11 +1,7 @@
 package com.okta.developer.gateway.repository;
 
-import static org.springframework.data.relational.core.query.Criteria.where;
-import static org.springframework.data.relational.core.query.Query.query;
-
 import com.okta.developer.gateway.domain.Authority;
 import com.okta.developer.gateway.domain.User;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,9 +12,6 @@ import org.springframework.data.r2dbc.convert.R2dbcConverter;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
-import org.springframework.data.relational.core.sql.Column;
-import org.springframework.data.relational.core.sql.Expression;
-import org.springframework.data.relational.core.sql.Table;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -125,7 +118,7 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
                 .filter(t -> t.getT2().isPresent())
                 .map(t -> {
                     Authority authority = new Authority();
-                    authority.setName(t.getT2().get());
+                    authority.setName(t.getT2().orElseThrow());
                     return authority;
                 })
                 .collect(Collectors.toSet())

@@ -3,29 +3,24 @@ package com.okta.developer.store.web.rest;
 import com.okta.developer.store.domain.Product;
 import com.okta.developer.store.repository.ProductRepository;
 import com.okta.developer.store.web.rest.errors.BadRequestAlertException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Flux;
+import org.springframework.web.util.ForwardedHeaderUtils;
 import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -35,7 +30,7 @@ import tech.jhipster.web.util.reactive.ResponseUtil;
  * REST controller for managing {@link com.okta.developer.store.domain.Product}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/products")
 public class ProductResource {
 
     private final Logger log = LoggerFactory.getLogger(ProductResource.class);
@@ -58,7 +53,7 @@ public class ProductResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new product, or with status {@code 400 (Bad Request)} if the product has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/products")
+    @PostMapping("")
     public Mono<ResponseEntity<Product>> createProduct(@Valid @RequestBody Product product) throws URISyntaxException {
         log.debug("REST request to save Product : {}", product);
         if (product.getId() != null) {
@@ -88,7 +83,7 @@ public class ProductResource {
      * or with status {@code 500 (Internal Server Error)} if the product couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/products/{id}")
+    @PutMapping("/{id}")
     public Mono<ResponseEntity<Product>> updateProduct(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody Product product
@@ -131,7 +126,7 @@ public class ProductResource {
      * or with status {@code 500 (Internal Server Error)} if the product couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/products/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public Mono<ResponseEntity<Product>> partialUpdateProduct(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody Product product
@@ -189,9 +184,9 @@ public class ProductResource {
      * @param request a {@link ServerHttpRequest} request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
      */
-    @GetMapping("/products")
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<List<Product>>> getAllProducts(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request
     ) {
         log.debug("REST request to get a page of Products");
@@ -203,7 +198,7 @@ public class ProductResource {
                     .ok()
                     .headers(
                         PaginationUtil.generatePaginationHttpHeaders(
-                            UriComponentsBuilder.fromHttpRequest(request),
+                            ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
                             new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
                         )
                     )
@@ -217,8 +212,8 @@ public class ProductResource {
      * @param id the id of the product to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the product, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/products/{id}")
-    public Mono<ResponseEntity<Product>> getProduct(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<Product>> getProduct(@PathVariable("id") String id) {
         log.debug("REST request to get Product : {}", id);
         Mono<Product> product = productRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(product);
@@ -230,8 +225,8 @@ public class ProductResource {
      * @param id the id of the product to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/products/{id}")
-    public Mono<ResponseEntity<Void>> deleteProduct(@PathVariable String id) {
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Void>> deleteProduct(@PathVariable("id") String id) {
         log.debug("REST request to delete Product : {}", id);
         return productRepository
             .deleteById(id)

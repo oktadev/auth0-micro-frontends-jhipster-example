@@ -2,17 +2,18 @@ package com.okta.developer.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.okta.developer.gateway.config.Constants;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -20,7 +21,7 @@ import org.springframework.data.relational.core.mapping.Table;
  * A user.
  */
 @Table("jhi_user")
-public class User extends AbstractAuditingEntity<String> implements Serializable {
+public class User extends AbstractAuditingEntity<String> implements Serializable, Persistable<String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,6 +59,9 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     @JsonIgnore
     @Transient
     private Set<Authority> authorities = new HashSet<>();
+
+    @Transient
+    private boolean isPersisted;
 
     public String getId() {
         return id;
@@ -130,6 +134,16 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    @Override
+    public boolean isNew() {
+        return !isPersisted;
+    }
+
+    public User setIsPersisted() {
+        this.isPersisted = true;
+        return this;
     }
 
     @Override

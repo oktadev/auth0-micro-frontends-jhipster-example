@@ -4,9 +4,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import sinon from 'sinon';
 
-import reducer, { createEntity, deleteEntity, getEntities, getEntity, updateEntity, partialUpdateEntity, reset } from './blog.reducer';
 import { EntityState } from 'app/shared/reducers/reducer.utils';
 import { IBlog, defaultValue } from 'app/shared/model/blog/blog.model';
+import reducer, { createEntity, deleteEntity, getEntities, getEntity, updateEntity, partialUpdateEntity, reset } from './blog.reducer';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
@@ -70,7 +70,7 @@ describe('Entities reducer tests', () => {
             updateSuccess: false,
             updating: true,
           });
-        }
+        },
       );
     });
 
@@ -102,7 +102,7 @@ describe('Entities reducer tests', () => {
         },
         {
           message: 'error message',
-        }
+        },
       );
     });
   });
@@ -114,7 +114,7 @@ describe('Entities reducer tests', () => {
         reducer(undefined, {
           type: getEntities.fulfilled.type,
           payload,
-        })
+        }),
       ).toEqual({
         ...initialState,
         loading: false,
@@ -128,7 +128,7 @@ describe('Entities reducer tests', () => {
         reducer(undefined, {
           type: getEntity.fulfilled.type,
           payload,
-        })
+        }),
       ).toEqual({
         ...initialState,
         loading: false,
@@ -142,7 +142,7 @@ describe('Entities reducer tests', () => {
         reducer(undefined, {
           type: createEntity.fulfilled.type,
           payload,
-        })
+        }),
       ).toEqual({
         ...initialState,
         updating: false,

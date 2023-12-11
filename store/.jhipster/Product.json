@@ -1,10 +1,10 @@
 {
+  "annotations": {
+    "changelogDate": "20231211151210"
+  },
   "applications": ["store"],
-  "changelogDate": "20220911045814",
   "clientRootFolder": "store",
   "databaseType": "mongodb",
-  "dto": "no",
-  "embedded": false,
   "entityTableName": "product",
   "fields": [
     {
@@ -24,12 +24,9 @@
       "fieldTypeBlobContent": "image"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
   "microserviceName": "store",
   "name": "Product",
   "pagination": "pagination",
-  "readOnly": false,
   "relationships": [],
-  "service": "no"
+  "searchEngine": "no"
 }

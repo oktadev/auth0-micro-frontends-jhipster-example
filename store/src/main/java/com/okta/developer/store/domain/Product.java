@@ -1,8 +1,8 @@
 package com.okta.developer.store.domain;
 
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.validation.constraints.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -111,7 +111,7 @@ public class Product implements Serializable {
         if (!(o instanceof Product)) {
             return false;
         }
-        return id != null && id.equals(((Product) o).id);
+        return getId() != null && getId().equals(((Product) o).getId());
     }
 
     @Override

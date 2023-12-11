@@ -42,7 +42,6 @@ final class Neo4jMigrations {
             String authorityLabel = "jhi_authority";
 
             String query = String.format(
-                "" +
                 "CREATE (u:%s) SET u = $user WITH u " +
                 "UNWIND $authorities AS authority " +
                 "MERGE (a:%s {name: authority}) " +
@@ -56,10 +55,11 @@ final class Neo4jMigrations {
                     try {
                         Map<String, Object> user = om.readValue(resource.getInputStream(), type);
                         user.put("user_id", UUID.randomUUID().toString());
+                        @SuppressWarnings("unchecked")
                         List<String> authorities = (List<String>) user.remove("authorities");
                         user.remove("_class");
 
-                        session.writeTransaction(t -> t.run(query, Values.parameters("user", user, "authorities", authorities)).consume());
+                        session.executeWrite(t -> t.run(query, Values.parameters("user", user, "authorities", authorities)).consume());
                     } catch (IOException e) {
                         throw new MigrationsException("Could not load resource " + resource.getDescription() + ".", e);
                     }

@@ -15,7 +15,7 @@ describe('Tag e2e test', () => {
   const tagPageUrlPattern = new RegExp('/blog/tag(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const tagSample = { name: 'Wooden' };
+  const tagSample = { name: 'lightly' };
 
   let tag;
 
@@ -95,7 +95,7 @@ describe('Tag e2e test', () => {
                 link: '<http://localhost/services/blog/api/tags?page=0&size=20>; rel="last",<http://localhost/services/blog/api/tags?page=0&size=20>; rel="first"',
               },
               body: [tag],
-            }
+            },
           ).as('entitiesRequestInternal');
         });
 
@@ -162,7 +162,8 @@ describe('Tag e2e test', () => {
     });
 
     it('should create an instance of Tag', () => {
-      cy.get(`[data-cy="name"]`).type('Card multi-tasking compressing').should('have.value', 'Card multi-tasking compressing');
+      cy.get(`[data-cy="name"]`).type('promenade aw across');
+      cy.get(`[data-cy="name"]`).should('have.value', 'promenade aw across');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

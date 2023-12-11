@@ -10,7 +10,7 @@ import com.okta.developer.store.IntegrationTest;
 import com.okta.developer.store.domain.Product;
 import com.okta.developer.store.repository.ProductRepository;
 import java.math.BigDecimal;
-import java.time.Duration;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.util.Base64Utils;
 
 /**
  * Integration tests for the {@link ProductResource} REST controller.
@@ -205,7 +204,7 @@ class ProductResourceIT {
             .jsonPath("$.[*].imageContentType")
             .value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE))
             .jsonPath("$.[*].image")
-            .value(hasItem(Base64Utils.encodeToString(DEFAULT_IMAGE)));
+            .value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_IMAGE)));
     }
 
     @Test
@@ -233,7 +232,7 @@ class ProductResourceIT {
             .jsonPath("$.imageContentType")
             .value(is(DEFAULT_IMAGE_CONTENT_TYPE))
             .jsonPath("$.image")
-            .value(is(Base64Utils.encodeToString(DEFAULT_IMAGE)));
+            .value(is(Base64.getEncoder().encodeToString(DEFAULT_IMAGE)));
     }
 
     @Test
@@ -242,7 +241,7 @@ class ProductResourceIT {
         webTestClient
             .get()
             .uri(ENTITY_API_URL_ID, Long.MAX_VALUE)
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_PROBLEM_JSON)
             .exchange()
             .expectStatus()
             .isNotFound();
@@ -349,6 +348,8 @@ class ProductResourceIT {
         Product partialUpdatedProduct = new Product();
         partialUpdatedProduct.setId(product.getId());
 
+        partialUpdatedProduct.title(UPDATED_TITLE).price(UPDATED_PRICE);
+
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedProduct.getId())
@@ -362,8 +363,8 @@ class ProductResourceIT {
         List<Product> productList = productRepository.findAll().collectList().block();
         assertThat(productList).hasSize(databaseSizeBeforeUpdate);
         Product testProduct = productList.get(productList.size() - 1);
-        assertThat(testProduct.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testProduct.getPrice()).isEqualByComparingTo(DEFAULT_PRICE);
+        assertThat(testProduct.getTitle()).isEqualTo(UPDATED_TITLE);
+        assertThat(testProduct.getPrice()).isEqualByComparingTo(UPDATED_PRICE);
         assertThat(testProduct.getImage()).isEqualTo(DEFAULT_IMAGE);
         assertThat(testProduct.getImageContentType()).isEqualTo(DEFAULT_IMAGE_CONTENT_TYPE);
     }

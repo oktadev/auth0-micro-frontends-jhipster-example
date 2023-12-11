@@ -15,7 +15,7 @@ describe('Blog e2e test', () => {
   const blogPageUrlPattern = new RegExp('/blog/blog(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const blogSample = { name: 'scale Metal Computers', handle: 'Grass-roots throughput Hat' };
+  const blogSample = { name: 'ooze', handle: 'rural generally' };
 
   let blog;
 
@@ -92,7 +92,7 @@ describe('Blog e2e test', () => {
             {
               statusCode: 200,
               body: [blog],
-            }
+            },
           ).as('entitiesRequestInternal');
         });
 
@@ -159,9 +159,11 @@ describe('Blog e2e test', () => {
     });
 
     it('should create an instance of Blog', () => {
-      cy.get(`[data-cy="name"]`).type('bus GB salmon').should('have.value', 'bus GB salmon');
+      cy.get(`[data-cy="name"]`).type('paddock weedkiller');
+      cy.get(`[data-cy="name"]`).should('have.value', 'paddock weedkiller');
 
-      cy.get(`[data-cy="handle"]`).type('Global').should('have.value', 'Global');
+      cy.get(`[data-cy="handle"]`).type('ouch while');
+      cy.get(`[data-cy="handle"]`).should('have.value', 'ouch while');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

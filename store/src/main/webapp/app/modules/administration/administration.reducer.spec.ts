@@ -1,8 +1,3 @@
-import configureStore from 'redux-mock-store';
-import axios from 'axios';
-import thunk from 'redux-thunk';
-import sinon from 'sinon';
-
 import administration from './administration.reducer';
 
 describe('Administration reducer tests', () => {
@@ -57,7 +52,7 @@ describe('Administration reducer tests', () => {
         },
         {
           message: 'error',
-        }
+        },
       );
     });
   });

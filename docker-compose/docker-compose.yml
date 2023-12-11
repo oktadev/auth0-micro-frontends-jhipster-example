@@ -4,7 +4,7 @@ services:
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
-      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_R2DBC_URL=r2dbc:postgresql://gateway-postgresql:5432/gateway
@@ -12,53 +12,120 @@ services:
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=web_app
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=web_app
-      - JHIPSTER_SLEEP=80
     ports:
       - "8080:8080"
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - "-f"
+        - http://localhost:8080/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      gateway-postgresql:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
   gateway-postgresql:
-    image: postgres:14.5
+    image: postgres:16.1
     environment:
       - POSTGRES_USER=gateway
       - POSTGRES_PASSWORD=
       - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER}
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   blog:
     image: blog
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
-      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_NEO4J_URI=bolt://blog-neo4j:7687
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
-      - JHIPSTER_SLEEP=60
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - "-f"
+        - http://localhost:8081/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      blog-neo4j:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
   blog-neo4j:
-    image: neo4j:4.4.9
+    image: neo4j:5.14.0
     environment:
       - NEO4J_AUTH=none
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - http://localhost:7474/
+        - "-O"
+        - "-"
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   store:
     image: store
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
-      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
-      - SPRING_DATA_MONGODB_URI=mongodb://store-mongodb:27017/?waitQueueMultiple=1000
-      - SPRING_DATA_MONGODB_DATABASE=store
+      - SPRING_DATA_MONGODB_URI=mongodb://store-mongodb:27017/store?waitQueueMultiple=1000
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
-      - JHIPSTER_SLEEP=60
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - "-f"
+        - http://localhost:8082/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      store-mongodb:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
   store-mongodb:
-    image: mongo:4.4.15
+    image: mongo:7.0.4
+    healthcheck:
+      test:
+        - CMD
+        - echo
+        - '''db.runCommand("ping").ok'''
+        - "|"
+        - mongo
+        - localhost:27017/test
+        - "--quiet"
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   consul:
-    image: consul:1.13.1
+    image: docker.io/bitnami/consul:1.17.0
     ports:
       - 8300:8300
       - 8500:8500
@@ -73,10 +140,11 @@ services:
       - CONSUL_URL=consul
       - CONSUL_PORT=8500
   keycloak:
-    image: quay.io/keycloak/keycloak:19.0.1
-    command: ["start-dev --import-realm"]
+    image: quay.io/keycloak/keycloak:23.0.1
+    command: "start-dev --import-realm"
     volumes:
       - ./realm-config:/opt/keycloak/data/import
+      - ./realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
     environment:
       - KC_DB=dev-file
       - KEYCLOAK_ADMIN=admin
@@ -84,6 +152,12 @@ services:
       - KC_FEATURES=scripts
       - KC_HTTP_PORT=9080
       - KC_HTTPS_PORT=9443
+      - KC_HEALTH_ENABLED=true
     ports:
       - 9080:9080
       - 9443:9443
+    healthcheck:
+      test: "bash /opt/keycloak/health-check.sh"
+      interval: 5s
+      timeout: 5s
+      retries: 20

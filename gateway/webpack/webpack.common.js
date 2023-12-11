@@ -118,7 +118,7 @@ module.exports = async options => {
               globOptions: { ignore: ['**/index.html'] },
             },
             {
-              from: require.resolve('axios/dist/axios.min.js'),
+              from: path.join(path.dirname(require.resolve('axios/package.json')), 'dist/axios.min.js'),
               to: 'swagger-ui/',
             },
             { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui/' },
@@ -145,7 +145,7 @@ module.exports = async options => {
         }),
       ],
     },
-    require('./webpack.microfrontend')({ serve: options.env.WEBPACK_SERVE })
+    require('./webpack.microfrontend')({ serve: options.env.WEBPACK_SERVE }),
     // jhipster-needle-add-webpack-config - JHipster will add custom config
   );
 };

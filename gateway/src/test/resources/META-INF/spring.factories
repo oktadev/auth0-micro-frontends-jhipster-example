@@ -1,1 +1,2 @@
-org.springframework.test.context.ContextCustomizerFactory = com.okta.developer.gateway.config.TestContainersSpringContextCustomizerFactory
+org.springframework.test.context.ContextCustomizerFactory = com.okta.developer.\
+    gateway.config.SqlTestContainersSpringContextCustomizerFactory

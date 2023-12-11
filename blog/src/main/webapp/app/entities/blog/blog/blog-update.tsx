@@ -47,6 +47,7 @@ export const BlogUpdate = () => {
     }
   }, [updateSuccess]);
 
+  // eslint-disable-next-line complexity
   const saveEntity = values => {
     const entity = {
       ...blogEntity,

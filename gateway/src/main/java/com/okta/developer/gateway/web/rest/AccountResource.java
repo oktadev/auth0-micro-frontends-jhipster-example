@@ -1,6 +1,5 @@
 package com.okta.developer.gateway.web.rest;
 
-import com.okta.developer.gateway.security.SecurityUtils;
 import com.okta.developer.gateway.service.UserService;
 import com.okta.developer.gateway.service.dto.AdminUserDTO;
 import java.security.Principal;

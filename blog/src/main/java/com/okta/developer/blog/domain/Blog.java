@@ -1,7 +1,9 @@
 package com.okta.developer.blog.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import javax.validation.constraints.*;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -12,6 +14,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 /**
  * A Blog.
  */
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Blog.class)
 @Node
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Blog implements Serializable {
@@ -32,7 +35,7 @@ public class Blog implements Serializable {
     @Property("handle")
     private String handle;
 
-    @Relationship(value = "HAS_", direction = Relationship.Direction.INCOMING)
+    @Relationship(value = "HAS_USER", direction = Relationship.Direction.OUTGOING)
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -99,7 +102,7 @@ public class Blog implements Serializable {
         if (!(o instanceof Blog)) {
             return false;
         }
-        return id != null && id.equals(((Blog) o).id);
+        return getId() != null && getId().equals(((Blog) o).getId());
     }
 
     @Override

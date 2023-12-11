@@ -2,33 +2,28 @@ import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, getSortState } from 'react-jhipster';
+import { Translate, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ITag } from 'app/shared/model/blog/tag.model';
 import { getEntities, reset } from './tag.reducer';
 
 export const Tag = () => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pageLocation = useLocation();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
   const [sorting, setSorting] = useState(false);
 
   const tagList = useAppSelector(state => state.blog.tag.entities);
   const loading = useAppSelector(state => state.blog.tag.loading);
-  const totalItems = useAppSelector(state => state.blog.tag.totalItems);
   const links = useAppSelector(state => state.blog.tag.links);
-  const entity = useAppSelector(state => state.blog.tag.entity);
   const updateSuccess = useAppSelector(state => state.blog.tag.updateSuccess);
 
   const getAllEntities = () => {
@@ -37,7 +32,7 @@ export const Tag = () => {
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
-      })
+      }),
     );
   };
 
@@ -95,6 +90,16 @@ export const Tag = () => {
     resetAll();
   };
 
+  const getSortIconByFieldName = (fieldName: string) => {
+    const sortFieldName = paginationState.sort;
+    const order = paginationState.order;
+    if (sortFieldName !== fieldName) {
+      return faSort;
+    } else {
+      return order === ASC ? faSortUp : faSortDown;
+    }
+  };
+
   return (
     <div>
       <h2 id="tag-heading" data-cy="TagHeading">
@@ -123,10 +128,10 @@ export const Tag = () => {
               <thead>
                 <tr>
                   <th className="hand" onClick={sort('id')}>
-                    <Translate contentKey="blogApp.blogTag.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="blogApp.blogTag.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                   </th>
                   <th className="hand" onClick={sort('name')}>
-                    <Translate contentKey="blogApp.blogTag.name">Name</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="blogApp.blogTag.name">Name</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('name')} />
                   </th>
                   <th />
                 </tr>
@@ -154,7 +159,12 @@ export const Tag = () => {
                             <Translate contentKey="entity.action.edit">Edit</Translate>
                           </span>
                         </Button>
-                        <Button tag={Link} to={`/blog/tag/${tag.id}/delete`} color="danger" size="sm" data-cy="entityDeleteButton">
+                        <Button
+                          onClick={() => (window.location.href = `/blog/tag/${tag.id}/delete`)}
+                          color="danger"
+                          size="sm"
+                          data-cy="entityDeleteButton"
+                        >
                           <FontAwesomeIcon icon="trash" />{' '}
                           <span className="d-none d-md-inline">
                             <Translate contentKey="entity.action.delete">Delete</Translate>

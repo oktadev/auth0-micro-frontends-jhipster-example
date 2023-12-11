@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 /**
  * Service class for managing users.
@@ -133,7 +132,7 @@ public class UserService {
 
     private Mono<User> syncUserWithIdP(Map<String, Object> details, User user) {
         // save authorities in to sync user roles/groups between IdP and JHipster's local database
-        Collection<String> userAuthorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toList());
+        Collection<String> userAuthorities = user.getAuthorities().stream().map(Authority::getName).toList();
 
         return getAuthorities()
             .collectList()
@@ -146,7 +145,7 @@ public class UserService {
                         authorityToSave.setName(authority);
                         return authorityToSave;
                     })
-                    .collect(Collectors.toList());
+                    .toList();
                 return Flux.fromIterable(authoritiesToSave);
             })
             .doOnNext(authority -> log.debug("Saving authority '{}' in local database", authority))

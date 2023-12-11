@@ -20,11 +20,19 @@ logging:
     org.hibernate.SQL: DEBUG
     com.okta.developer.gateway: DEBUG
 
+management:
+  zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0 # report 100% of traces
+
 spring:
   devtools:
     restart:
       enabled: true
-      additional-exclude: static/**,.h2.server.properties
+      additional-exclude: static/**
     livereload:
       enabled: false # we use Webpack dev server + BrowserSync for livereload
   jackson:
@@ -46,36 +54,18 @@ spring:
           - git-branch=${git.branch:}
       host: localhost
       port: 8500
-  h2:
-    console:
-      # disable spring boot built-in h2-console since we start it manually with correct configuration
-      enabled: false
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
     contexts: dev, faker
-    url: jdbc:h2:file:./build/h2db/db/gateway;DB_CLOSE_DELAY=-1;MODE=LEGACY
+    url: jdbc:postgresql://localhost:5432/gateway
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   r2dbc:
-    url: r2dbc:h2:file://././build/h2db/db/gateway;DB_CLOSE_DELAY=-1;MODE=LEGACY
+    url: r2dbc:postgresql://localhost:5432/gateway
     username: gateway
     password:
   thymeleaf:
     cache: false
-  sleuth:
-    # https://github.com/spring-projects/spring-framework/issues/27844#issuescomment-1002866885
-    # https://github.com/spring-cloud/spring-cloud-sleuth/issues/2094
-    async:
-      enabled: false
-    enabled: false
-    sampler:
-      probability: 1 # report 100% of traces
-  zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
-    base-url: http://localhost:9411
-    enabled: false
-    locator:
-      discovery:
-        enabled: true
 
 server:
   port: 8080
@@ -95,8 +85,8 @@ jhipster:
   # CORS is only enabled by default with the "dev" profile
   cors:
     # Allow Ionic for JHipster by default (* no longer allowed in Spring Boot 2.4+)
-    # Ports 9063-9071 are allowed for microfrontend development
-    allowed-origins: 'http://localhost:8100,https://localhost:8100,http://localhost:9000,https://localhost:9000,http://localhost:9062,https://localhost:9062,http://localhost:9063,https://localhost:9063,http://localhost:9064,https://localhost:9064,http://localhost:9065,https://localhost:9065,http://localhost:9066,https://localhost:9066,http://localhost:9067,https://localhost:9067,http://localhost:9068,https://localhost:9068,http://localhost:9069,https://localhost:9069,http://localhost:9070,https://localhost:9070,http://localhost:9071,https://localhost:9071'
+    # Ports 9061-9069 are allowed for microfrontend development
+    allowed-origins: 'http://localhost:8100,https://localhost:8100,http://localhost:9000,https://localhost:9000,http://localhost:9060,https://localhost:9060,http://localhost:9061,https://localhost:9061,http://localhost:9062,https://localhost:9062,http://localhost:9063,https://localhost:9063,http://localhost:9064,https://localhost:9064,http://localhost:9065,https://localhost:9065,http://localhost:9066,https://localhost:9066,http://localhost:9067,https://localhost:9067,http://localhost:9068,https://localhost:9068,http://localhost:9069,https://localhost:9069'
     # Enable CORS when running in GitHub Codespaces
     allowed-origin-patterns: 'https://*.githubpreview.dev'
     allowed-methods: '*'
@@ -110,7 +100,7 @@ jhipster:
       enabled: false
       host: localhost
       port: 5000
-      queue-size: 512
+      ring-buffer-size: 512
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

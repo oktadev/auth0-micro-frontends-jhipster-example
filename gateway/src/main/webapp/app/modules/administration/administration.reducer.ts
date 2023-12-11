@@ -43,7 +43,7 @@ export const getSystemThreadDump = createAsyncThunk(
   async () => axios.get<any>('management/threaddump'),
   {
     serializeError: serializeAxiosError,
-  }
+  },
 );
 
 export const getLoggers = createAsyncThunk('administration/fetch_logs', async () => axios.get<any>('management/loggers'), {
@@ -55,7 +55,7 @@ export const setLoggers = createAsyncThunk(
   async ({ name, configuredLevel }: any) => axios.post(`management/loggers/${name}`, { configuredLevel }),
   {
     serializeError: serializeAxiosError,
-  }
+  },
 );
 
 export const changeLogLevel: (name, configuredLevel) => AppThunk = (name, configuredLevel) => async dispatch => {
@@ -68,7 +68,7 @@ export const getConfigurations = createAsyncThunk(
   async () => axios.get<any>('management/configprops'),
   {
     serializeError: serializeAxiosError,
-  }
+  },
 );
 
 export const getEnv = createAsyncThunk('administration/fetch_env', async () => axios.get<any>('management/env'), {
@@ -124,14 +124,14 @@ export const AdministrationSlice = createSlice({
         state => {
           state.errorMessage = null;
           state.loading = true;
-        }
+        },
       )
       .addMatcher(
         isRejected(getGatewayRoutes, getSystemHealth, getSystemMetrics, getSystemThreadDump, getLoggers, getConfigurations, getEnv),
         (state, action) => {
           state.errorMessage = action.error.message;
           state.loading = false;
-        }
+        },
       );
   },
 });

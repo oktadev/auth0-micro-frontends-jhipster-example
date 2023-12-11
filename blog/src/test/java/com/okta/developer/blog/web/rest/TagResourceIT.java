@@ -8,14 +8,10 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import com.okta.developer.blog.IntegrationTest;
 import com.okta.developer.blog.domain.Tag;
 import com.okta.developer.blog.repository.TagRepository;
-import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
@@ -186,7 +182,7 @@ class TagResourceIT {
         webTestClient
             .get()
             .uri(ENTITY_API_URL_ID, Long.MAX_VALUE)
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_PROBLEM_JSON)
             .exchange()
             .expectStatus()
             .isNotFound();
@@ -290,8 +286,6 @@ class TagResourceIT {
         Tag partialUpdatedTag = new Tag();
         partialUpdatedTag.setId(tag.getId());
 
-        partialUpdatedTag.name(UPDATED_NAME);
-
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedTag.getId())
@@ -305,7 +299,7 @@ class TagResourceIT {
         List<Tag> tagList = tagRepository.findAll().collectList().block();
         assertThat(tagList).hasSize(databaseSizeBeforeUpdate);
         Tag testTag = tagList.get(tagList.size() - 1);
-        assertThat(testTag.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testTag.getName()).isEqualTo(DEFAULT_NAME);
     }
 
     @Test

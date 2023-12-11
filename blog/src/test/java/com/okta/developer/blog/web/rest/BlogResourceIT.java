@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
@@ -246,7 +243,7 @@ class BlogResourceIT {
         webTestClient
             .get()
             .uri(ENTITY_API_URL_ID, Long.MAX_VALUE)
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_PROBLEM_JSON)
             .exchange()
             .expectStatus()
             .isNotFound();
@@ -351,7 +348,7 @@ class BlogResourceIT {
         Blog partialUpdatedBlog = new Blog();
         partialUpdatedBlog.setId(blog.getId());
 
-        partialUpdatedBlog.name(UPDATED_NAME);
+        partialUpdatedBlog.handle(UPDATED_HANDLE);
 
         webTestClient
             .patch()
@@ -366,8 +363,8 @@ class BlogResourceIT {
         List<Blog> blogList = blogRepository.findAll().collectList().block();
         assertThat(blogList).hasSize(databaseSizeBeforeUpdate);
         Blog testBlog = blogList.get(blogList.size() - 1);
-        assertThat(testBlog.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testBlog.getHandle()).isEqualTo(DEFAULT_HANDLE);
+        assertThat(testBlog.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testBlog.getHandle()).isEqualTo(UPDATED_HANDLE);
     }
 
     @Test

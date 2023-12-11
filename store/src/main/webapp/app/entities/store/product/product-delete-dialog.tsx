@@ -10,7 +10,7 @@ import { getEntity, deleteEntity } from './product.reducer';
 export const ProductDeleteDialog = () => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
+  const pageLocation = useLocation();
   const navigate = useNavigate();
   const { id } = useParams<'id'>();
 
@@ -25,7 +25,7 @@ export const ProductDeleteDialog = () => {
   const updateSuccess = useAppSelector(state => state.store.product.updateSuccess);
 
   const handleClose = () => {
-    navigate('/store/product' + location.search);
+    navigate('/store/product' + pageLocation.search);
   };
 
   useEffect(() => {

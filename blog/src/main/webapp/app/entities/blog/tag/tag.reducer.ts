@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 import { loadMoreDataWhenScrolled, parseHeaderForLinks } from 'react-jhipster';
-
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { ITag, defaultValue } from 'app/shared/model/blog/tag.model';
@@ -22,7 +21,7 @@ const apiUrl = 'services/blog/api/tags';
 // Actions
 
 export const getEntities = createAsyncThunk('tag/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
+  const requestUrl = `${apiUrl}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
   return axios.get<ITag[]>(requestUrl);
 });
 
@@ -32,7 +31,7 @@ export const getEntity = createAsyncThunk(
     const requestUrl = `${apiUrl}/${id}`;
     return axios.get<ITag>(requestUrl);
   },
-  { serializeError: serializeAxiosError }
+  { serializeError: serializeAxiosError },
 );
 
 export const createEntity = createAsyncThunk(
@@ -40,7 +39,7 @@ export const createEntity = createAsyncThunk(
   async (entity: ITag, thunkAPI) => {
     return axios.post<ITag>(apiUrl, cleanEntity(entity));
   },
-  { serializeError: serializeAxiosError }
+  { serializeError: serializeAxiosError },
 );
 
 export const updateEntity = createAsyncThunk(
@@ -48,7 +47,7 @@ export const updateEntity = createAsyncThunk(
   async (entity: ITag, thunkAPI) => {
     return axios.put<ITag>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
   },
-  { serializeError: serializeAxiosError }
+  { serializeError: serializeAxiosError },
 );
 
 export const partialUpdateEntity = createAsyncThunk(
@@ -56,7 +55,7 @@ export const partialUpdateEntity = createAsyncThunk(
   async (entity: ITag, thunkAPI) => {
     return axios.patch<ITag>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
   },
-  { serializeError: serializeAxiosError }
+  { serializeError: serializeAxiosError },
 );
 
 export const deleteEntity = createAsyncThunk(
@@ -65,7 +64,7 @@ export const deleteEntity = createAsyncThunk(
     const requestUrl = `${apiUrl}/${id}`;
     return await axios.delete<ITag>(requestUrl);
   },
-  { serializeError: serializeAxiosError }
+  { serializeError: serializeAxiosError },
 );
 
 // slice

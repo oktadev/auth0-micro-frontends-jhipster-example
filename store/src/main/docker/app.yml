@@ -1,47 +1,45 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
-version: '3.8'
+name: store
 services:
-  store-app:
+  app:
     image: store
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
-      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
-      - SPRING_DATA_MONGODB_URI=mongodb://store-mongodb:27017/?waitQueueMultiple=1000
-      - SPRING_DATA_MONGODB_DATABASE=store
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/store?waitQueueMultiple=1000
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
-      - JHIPSTER_SLEEP=60 # gives time for other services to boot before the application
-  store-mongodb:
-    image: mongo:4.4.15
-    # If you want to expose these ports outside your dev PC,
-    # remove the "127.0.0.1:" prefix
-    ports:
-      - 127.0.0.1:27017:27017
-    # volumes:
-    #   - ~/volumes/jhipster/store/mongodb/:/data/db/
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8082/management/health
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+  mongodb:
+    extends:
+      file: ./mongodb.yml
+      service: mongodb
+  keycloak:
+    extends:
+      file: ./keycloak.yml
+      service: keycloak
   consul:
-    image: consul:1.13.1
-    # If you want to expose these ports outside your dev PC,
-    # remove the "127.0.0.1:" prefix
-    ports:
-      - 127.0.0.1:8300:8300
-      - 127.0.0.1:8500:8500
-      - 127.0.0.1:8600:8600
-    command: consul agent -dev -ui -client 0.0.0.0 -log-level=INFO
-
+    extends:
+      file: ./consul.yml
+      service: consul
   consul-config-loader:
-    image: jhipster/consul-config-loader:v0.4.1
-    volumes:
-      - ./central-server-config:/config
-    environment:
-      - INIT_SLEEP_SECONDS=5
-      - CONSUL_URL=consul
-      - CONSUL_PORT=8500
-      # Uncomment to load configuration into Consul from a Git repository
-      # as configured in central-server-config/git2consul.json
-      # Also set SPRING_CLOUD_CONSUL_CONFIG_FORMAT=files on your apps
-      # - CONFIG_MODE=git
+    extends:
+      file: ./consul.yml
+      service: consul-config-loader

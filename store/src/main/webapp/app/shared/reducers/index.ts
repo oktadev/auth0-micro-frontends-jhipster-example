@@ -1,11 +1,11 @@
-import { ReducersMapObject, combineReducers } from '@reduxjs/toolkit';
+import { ReducersMapObject } from '@reduxjs/toolkit';
 import { loadingBarReducer as loadingBar } from 'react-redux-loading-bar';
 
+import administration from 'app/modules/administration/administration.reducer';
 import locale from './locale';
 import authentication from './authentication';
 import applicationProfile from './application-profile';
 
-import administration from 'app/modules/administration/administration.reducer';
 import userManagement from './user-management';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 

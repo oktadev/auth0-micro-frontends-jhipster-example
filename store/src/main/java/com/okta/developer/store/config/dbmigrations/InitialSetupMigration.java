@@ -1,13 +1,10 @@
 package com.okta.developer.store.config.dbmigrations;
 
-import com.okta.developer.store.config.Constants;
 import com.okta.developer.store.domain.Authority;
-import com.okta.developer.store.domain.User;
 import com.okta.developer.store.security.AuthoritiesConstants;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
-import java.time.Instant;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**

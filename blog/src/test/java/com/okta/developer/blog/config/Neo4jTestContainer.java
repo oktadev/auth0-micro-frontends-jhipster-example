@@ -30,7 +30,7 @@ public class Neo4jTestContainer implements InitializingBean, DisposableBean {
     public void afterPropertiesSet() {
         if (null == neo4jContainer) {
             neo4jContainer =
-                (Neo4jContainer) new Neo4jContainer(DockerImageName.parse("neo4j:4.4.9"))
+                (Neo4jContainer) new Neo4jContainer(DockerImageName.parse("neo4j:5.14.0"))
                     .withoutAuthentication()
                     .withStartupTimeout(Duration.of(CONTAINER_STARTUP_TIMEOUT_MINUTES, ChronoUnit.MINUTES))
                     .withLogConsumer(new Slf4jLogConsumer(log))

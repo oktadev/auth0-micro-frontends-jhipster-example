@@ -21,7 +21,7 @@ spec:
             - name: INIT_SLEEP_SECONDS
               value: "5"
             - name: CONSUL_URL
-              value: consul.demo.svc.cluster.local
+              value: consul-headless.demo.svc.cluster.local
             - name: CONSUL_PORT
               value: "8500"
           volumeMounts:

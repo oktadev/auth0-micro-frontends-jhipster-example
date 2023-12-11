@@ -3,29 +3,24 @@ package com.okta.developer.blog.web.rest;
 import com.okta.developer.blog.domain.Post;
 import com.okta.developer.blog.repository.PostRepository;
 import com.okta.developer.blog.web.rest.errors.BadRequestAlertException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Flux;
+import org.springframework.web.util.ForwardedHeaderUtils;
 import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -35,7 +30,7 @@ import tech.jhipster.web.util.reactive.ResponseUtil;
  * REST controller for managing {@link com.okta.developer.blog.domain.Post}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/posts")
 public class PostResource {
 
     private final Logger log = LoggerFactory.getLogger(PostResource.class);
@@ -58,7 +53,7 @@ public class PostResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new post, or with status {@code 400 (Bad Request)} if the post has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/posts")
+    @PostMapping("")
     public Mono<ResponseEntity<Post>> createPost(@Valid @RequestBody Post post) throws URISyntaxException {
         log.debug("REST request to save Post : {}", post);
         if (post.getId() != null) {
@@ -88,7 +83,7 @@ public class PostResource {
      * or with status {@code 500 (Internal Server Error)} if the post couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/posts/{id}")
+    @PutMapping("/{id}")
     public Mono<ResponseEntity<Post>> updatePost(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody Post post
@@ -131,7 +126,7 @@ public class PostResource {
      * or with status {@code 500 (Internal Server Error)} if the post couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/posts/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public Mono<ResponseEntity<Post>> partialUpdatePost(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody Post post
@@ -186,9 +181,9 @@ public class PostResource {
      * @param request a {@link ServerHttpRequest} request.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of posts in body.
      */
-    @GetMapping("/posts")
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<List<Post>>> getAllPosts(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request
     ) {
         log.debug("REST request to get a page of Posts");
@@ -200,7 +195,7 @@ public class PostResource {
                     .ok()
                     .headers(
                         PaginationUtil.generatePaginationHttpHeaders(
-                            UriComponentsBuilder.fromHttpRequest(request),
+                            ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
                             new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
                         )
                     )
@@ -214,8 +209,8 @@ public class PostResource {
      * @param id the id of the post to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the post, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/posts/{id}")
-    public Mono<ResponseEntity<Post>> getPost(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<Post>> getPost(@PathVariable("id") String id) {
         log.debug("REST request to get Post : {}", id);
         Mono<Post> post = postRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(post);
@@ -227,8 +222,8 @@ public class PostResource {
      * @param id the id of the post to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/posts/{id}")
-    public Mono<ResponseEntity<Void>> deletePost(@PathVariable String id) {
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Void>> deletePost(@PathVariable("id") String id) {
         log.debug("REST request to delete Post : {}", id);
         return postRepository
             .deleteById(id)

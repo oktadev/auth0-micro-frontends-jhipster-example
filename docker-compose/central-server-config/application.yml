@@ -1,21 +1,20 @@
 #common configuration shared between all applications
 configserver:
-  name: Docker JHipster Registry
+  name: Service Registry
   status: Connected to Consul running in Docker
 
 jhipster:
   security:
-#    oauth2:
-#      audience: https://<your-auth0-domain>/api/v2/
-
-#spring:
-#  security:
-#    oauth2:
-#      client:
-#        provider:
-#          oidc:
-#            issuer-uri: https://<your-auth0-domain>/ # make sure to include the trailing slash!
-#        registration:
-#          oidc:
-#            client-id: <your-client-id>
-#            client-secret: <your-client-secret>
+    oauth2:
+      audience: https://dev-06bzs1cu.us.auth0.com/api/v2/
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: https://dev-06bzs1cu.us.auth0.com/ # make sure to include the trailing slash!
+        registration:
+          oidc:
+            client-id: QLPXGHrEUMgylcwYb4sejIR8DBcwstob
+            client-secret: SoiCAMAZbJGIIdzIWTd1yUmsMn7Rm38fzW62PCuGZfoubwmWoUDTHbl1GEm7L8B6

@@ -3,11 +3,11 @@ package com.okta.developer.blog.service.dto;
 import com.okta.developer.blog.config.Constants;
 import com.okta.developer.blog.domain.Authority;
 import com.okta.developer.blog.domain.User;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.constraints.*;
 
 /**
  * A DTO representing a user, with his authorities.
