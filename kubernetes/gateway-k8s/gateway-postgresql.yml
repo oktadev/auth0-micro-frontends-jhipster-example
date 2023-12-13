@@ -19,7 +19,7 @@ metadata:
     app: gateway-postgresql
 type: Opaque
 data:
-  postgresql-password: MTRiYTFkNWRhZDRkYTJkZjI4NzkwMTlmZmM4ODc2MmM1MzEyODk0N2Y1YTViYjA5YThjYzdiMWJmZDQ5
+  postgresql-password: MDYzZmYxMDNhYmU5ZDFmMzdhNjBjOTNjZTFiZDNmZWVhZGIwYzJjNTE3NzViYmYxZTg4ZjAyZjYwNjU1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -42,7 +42,7 @@ spec:
             claimName: gateway-postgresql-pvc
       containers:
         - name: postgres
-          image: postgres:14.5
+          image: postgres:16.1
           env:
             - name: POSTGRES_USER
               value: gateway

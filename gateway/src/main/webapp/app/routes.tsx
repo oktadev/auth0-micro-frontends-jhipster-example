@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { Route } from 'react-router-dom';
 import Loadable from 'react-loadable';
+import { importRemote } from '@module-federation/utilities';
 
 import LoginRedirect from 'app/modules/login/login-redirect';
 import Logout from 'app/modules/login/logout';
@@ -18,8 +19,21 @@ const Admin = Loadable({
   loading: () => loading,
 });
 
-const BlogRoutes = React.lazy(() => import('@blog/entities-routes').catch(() => import('app/shared/error/error-loading')));
-const StoreRoutes = React.lazy(() => import('@store/entities-routes').catch(() => import('app/shared/error/error-loading')));
+const BlogRoutes = React.lazy(() =>
+  importRemote<any>({
+    url: `./services/blog`,
+    scope: 'blog',
+    module: './entities-routes',
+  }).catch(() => import('app/shared/error/error-loading')),
+);
+
+const StoreRoutes = React.lazy(() =>
+  importRemote<any>({
+    url: `./services/store`,
+    scope: 'store',
+    module: './entities-routes',
+  }).catch(() => import('app/shared/error/error-loading')),
+);
 
 const AppRoutes = () => {
   return (

@@ -9,20 +9,20 @@ Today, I'll show you how to build a microservices and micro frontends architectu
 
 **Prerequisites**:
 
-- https://sdkman.io/[Java] 11+
-- https://nodejs.com/[Node.js] 16+
+- https://sdkman.io/[Java] 17+
+- https://nodejs.com/[Node.js] 18+
 - https://www.docker.com/products/docker-desktop/[Docker Desktop]
-- https://www.jhipster.tech/installation/[JHipster] 7.9.3
+- https://www.jhipster.tech/installation/[JHipster] 8
 
 toc::[]
 
 == Micro frontends in action with JHipster
 
-. Install JHipster 7:
+. Install JHipster 8:
 +
 [source,shell]
 ----
-npm i -g generator-jhipster@7
+npm i -g generator-jhipster@8
 ----
 
 . Run the following command to create a new directory for your micro frontends project:
@@ -52,11 +52,11 @@ TIP: The https://plugins.jetbrains.com/plugin/19697-jhipster-jdl[JHipster JDL Pl
 jhipster jdl reactive-mf.jdl --monorepository --workspaces
 ----
 
-. If you want to use Angular, append `--client-framework angularX` to override the JDL value:
+. If you want to use Angular, append `--client-framework angular` to override the JDL value:
 +
 [source,shell]
 ----
---client-framework angularX
+--client-framework angular
 ----
 
 . If you'd rather try out Vue, use the following:
@@ -68,13 +68,14 @@ jhipster jdl reactive-mf.jdl --monorepository --workspaces
 
 === Run your reactive Spring Boot microservices
 
-. When the process is complete, cd into the `gateway` directory and start Keycloak and Consul using Docker Compose.
+. When the process is complete, cd into the `gateway` directory and start Consul, Keycloak, and PostgreSQL using Docker Compose.
 +
 [source,shell]
 ----
 cd gateway
-docker compose -f src/main/docker/keycloak.yml up -d
 docker compose -f src/main/docker/consul.yml up -d
+docker compose -f src/main/docker/keycloak.yml up -d
+docker compose -f src/main/docker/postgresql.yml up -d
 ----
 
 . Run `./gradlew` (or `npm run app:start` if you prefer npm commands).
@@ -105,13 +106,13 @@ What if you want to work on the UI and have zero turnaround that sparks joy? ✨
 
 . In the gateway app, run `npm start`. This command will run the UI on a web server, open a browser window to `\http://localhost:9000`, and use https://browsersync.io/[Browsersync] to keep your browser in sync with your code.
 
-. Modify the code in `gateway/src/main/webapp/app/modules/home/home.tsx` to make a quick change. For example, add the following HTML below the `<h2>`.
+. Modify the code in `gateway/src/main/webapp/app/modules/home/home.tsx` to make a quick change. For example, add the following HTML below the `<h1>`.
 +
 [source,html]
 ----
-<h3 className="text-primary">
+<h2 className="text-primary">
   Hi, I'm a quick edit!
-</h3>
+</h2>
 ----
 
 . You'll see this change immediately appear within your browser. Remove it, and it'll disappear right away too.
@@ -135,7 +136,7 @@ NOTE: The backend has quick turnaround abilities too, thanks to https://docs.spr
 
 When you're learning concepts like micro frontends, it's often helpful to look at the code that makes things work.
 
-The gateway's `webpack.microfrontend.js` handles setting up the `@blog` and `@store` remotes and specifying the shared dependencies and components between apps.
+The gateway's `webpack.microfrontend.js` handles  specifying the shared dependencies and components between apps. The `src/main/webapp/app/shared/layout/menus/entities.tsx` file contains the menu items for each micro frontend.
 
 The blog's `webpack.microfrontend.js` looks similar, except that it exposes its `remoteEntry.js`, menu items, and routes.
 
@@ -178,6 +179,8 @@ npm run e2e -ws
 
 JHipster ships with Keycloak when you choose OAuth 2.0 / OIDC as the authentication type. However, you can easily change it to another identity provider, like Auth0!
 
+TIP: To use the command line, see the Auth0 CLI sidebar below.
+
 . First, register a regular web application. Log in to your Auth0 account (or https://auth0.com/signup[sign up] if you don't have an account). You should have a unique domain like `dev-xxx.us.auth0.com`
 
 . Select *Create Application* in the https://manage.auth0.com/#/applications[Applications section]. Use a name like `Micro Frontends`, select *Regular Web Applications*, and click *Create*.
@@ -210,9 +213,91 @@ exports.onExecutePostLogin = async (event, api) => {
 ----
 
 . Select **Deploy** and drag the `Add Roles` action to your Login flow.
-+
-CAUTION: Want to have all these steps automated for you? Vote for https://github.com/auth0/auth0-cli/issues/351[issue #351] in the Auth0 CLI project.
 
+.Auth0 CLI
+****
+If you're a command line fan, you can use the https://github.com/auth0/auth0-cli#installation[Auth0 CLI] to register your JHipster application.
+
+[source,shell]
+----
+auth0 apps create \
+  --name "Micro Frontends" \
+  --description "Micro Frontends with JHipster" \
+  --type regular \
+  --callbacks http://localhost:8080/login/oauth2/code/oidc \
+  --logout-urls http://localhost:8080 \
+  --reveal-secrets
+----
+
+Create a test user and save the ID for later:
+
+[source,shell]
+----
+auth0 users create
+----
+
+Create the `USER_ROLE` and `ADMIN_ROLE` roles in Auth0:
+
+[source,shell]
+----
+auth0 roles create --name USER_ROLE --description "User Role for JHipster"
+auth0 roles create --name ADMIN_ROLE --description "Admin Role for JHipster"
+----
+
+Assign the roles to the users you created:
+
+[source,shell]
+----
+auth0 users roles assign
+----
+
+Create a Login Action to assign roles to tokens:
+
+[source,shell]
+----
+auth0 actions create
+----
+
+Select *post-login* for the Trigger. When the editor opens, set the following implementation for the `onExecutePostLogin` function.
+
+[source,js]
+----
+exports.onExecutePostLogin = async (event, api) => {
+  const namespace = 'https://www.jhipster.tech';
+  if (event.authorization) {
+    api.idToken.setCustomClaim('preferred_username', event.user.email);
+    api.idToken.setCustomClaim(`${namespace}/roles`, event.authorization.roles);
+    api.accessToken.setCustomClaim(`${namespace}/roles`, event.authorization.roles);
+  }
+}
+----
+
+List the available actions:
+
+[source,shell]
+----
+auth0 actions list
+----
+
+Note the `DEPLOYED` status is `x`. Go ahead and deploy it using the action ID:
+
+[source,shell]
+----
+auth0 actions deploy <action-id>
+----
+
+Once the action is deployed, you must attach it to the login flow.
+
+[source,shell]
+----
+auth0 api patch "actions/triggers/post-login/bindings" \
+  --data '{"bindings":[{"ref":{"type":"action_id","value":"<action-id>"},"display_name":"Add Roles"}]}'
+----
+
+CAUTION: Want to have all these steps automated for you? Vote for https://github.com/auth0/auth0-cli/issues/351[issue #351] in the Auth0 CLI project.
+****
+
+[start=8]
 . Edit `docker-compose/central-server-config/application.yml` and append the following YAML block to add your Auth0 settings. [`jh-oidc-a0`]
 +
 [source,yaml]

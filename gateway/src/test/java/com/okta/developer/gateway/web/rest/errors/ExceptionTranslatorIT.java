@@ -3,11 +3,12 @@ package com.okta.developer.gateway.web.rest.errors;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 import com.okta.developer.gateway.IntegrationTest;
+import org.hamcrest.core.AnyOf;
+import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -128,7 +129,7 @@ class ExceptionTranslatorIT {
             .jsonPath("$.path")
             .isEqualTo("/api/exception-translator-test/unauthorized")
             .jsonPath("$.detail")
-            .isEqualTo("test authentication failed!");
+            .value(AnyOf.anyOf(IsEqual.equalTo("test authentication failed!"), IsEqual.equalTo("Invalid credentials")));
     }
 
     @Test
@@ -145,7 +146,7 @@ class ExceptionTranslatorIT {
             .jsonPath("$.message")
             .isEqualTo("error.http.405")
             .jsonPath("$.detail")
-            .isEqualTo("405 METHOD_NOT_ALLOWED \"Request method 'POST' not supported\"");
+            .isEqualTo("405 METHOD_NOT_ALLOWED \"Request method 'POST' is not supported.\"");
     }
 
     @Test

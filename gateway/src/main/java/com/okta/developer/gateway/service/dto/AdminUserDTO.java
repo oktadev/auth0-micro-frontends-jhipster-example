@@ -3,11 +3,11 @@ package com.okta.developer.gateway.service.dto;
 import com.okta.developer.gateway.config.Constants;
 import com.okta.developer.gateway.domain.Authority;
 import com.okta.developer.gateway.domain.User;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.constraints.*;
 
 /**
  * A DTO representing a user, with his authorities.

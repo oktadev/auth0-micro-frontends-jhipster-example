@@ -42,7 +42,12 @@ export const ProductUpdate = () => {
     }
   }, [updateSuccess]);
 
+  // eslint-disable-next-line complexity
   const saveEntity = values => {
+    if (values.price !== undefined && typeof values.price !== 'number') {
+      values.price = Number(values.price);
+    }
+
     const entity = {
       ...productEntity,
       ...values,

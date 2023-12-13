@@ -10,7 +10,7 @@ import { getEntity, deleteEntity } from './blog.reducer';
 export const BlogDeleteDialog = () => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
+  const pageLocation = useLocation();
   const navigate = useNavigate();
   const { id } = useParams<'id'>();
 

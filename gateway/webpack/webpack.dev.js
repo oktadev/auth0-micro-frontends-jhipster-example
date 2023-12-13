@@ -30,7 +30,10 @@ module.exports = async options =>
           test: /\.(sa|sc|c)ss$/,
           use: [
             'style-loader',
-            'css-loader',
+            {
+              loader: 'css-loader',
+              options: { url: false },
+            },
             {
               loader: 'postcss-loader',
             },
@@ -47,7 +50,7 @@ module.exports = async options =>
       static: {
         directory: './build/resources/main/static/',
       },
-      port: 9062,
+      port: 9060,
       proxy: [
         {
           context: ['/api', '/services', '/management', '/v3/api-docs', '/h2-console', '/oauth2', '/login', '/auth'],
@@ -72,7 +75,7 @@ module.exports = async options =>
           host: 'localhost',
           port: 9000,
           proxy: {
-            target: `http${options.tls ? 's' : ''}://localhost:${options.watch ? '8080' : '9062'}`,
+            target: `http${options.tls ? 's' : ''}://localhost:${options.watch ? '8080' : '9060'}`,
             ws: true,
             proxyOptions: {
               changeOrigin: false, //pass the Host header to the backend unchanged  https://github.com/Browsersync/browser-sync/issues/430
@@ -93,7 +96,7 @@ module.exports = async options =>
         },
         {
           reload: false,
-        }
+        },
       ),
       new WebpackNotifierPlugin({
         title: 'Gateway',

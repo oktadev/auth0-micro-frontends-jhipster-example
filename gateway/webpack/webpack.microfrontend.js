@@ -1,7 +1,18 @@
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 
 const packageJson = require('../package.json');
-const appVersion = packageJson.version;
+// Microfrontend api, should match across gateway and microservices.
+const apiVersion = '0.0.1';
+
+const sharedDefaults = { singleton: true, strictVersion: true, requiredVersion: apiVersion };
+const shareMappings = (...mappings) => Object.fromEntries(mappings.map(map => [map, { ...sharedDefaults, version: apiVersion }]));
+
+const shareDependencies = ({ skipList = [] } = {}) =>
+  Object.fromEntries(
+    Object.entries(packageJson.dependencies)
+      .filter(([dependency]) => !skipList.includes(dependency))
+      .map(([dependency, version]) => [dependency, { ...sharedDefaults, version, requiredVersion: version }]),
+  );
 
 module.exports = ({ serve }) => {
   return {
@@ -10,70 +21,24 @@ module.exports = ({ serve }) => {
       chunkIds: 'named',
       runtimeChunk: false,
     },
+
     plugins: [
       new ModuleFederationPlugin({
         shareScope: 'default',
-        remotes: {
-          '@blog': `blog@/services/blog/remoteEntry.js`,
-          '@store': `store@/services/store/remoteEntry.js`,
-        },
         shared: {
-          ...Object.fromEntries(
-            Object.entries(packageJson.dependencies).map(([module, version]) => [
-              module,
-              { requiredVersion: version, singleton: true, shareScope: 'default' },
-            ])
+          ...shareDependencies(),
+          ...shareMappings(
+            'app/config/constants',
+            'app/config/store',
+            'app/shared/error/error-boundary-routes',
+            'app/shared/layout/menus/menu-components',
+            'app/shared/layout/menus/menu-item',
+            'app/shared/reducers',
+            'app/shared/reducers/locale',
+            'app/shared/reducers/reducer.utils',
+            'app/shared/util/date-utils',
+            'app/shared/util/entity-utils',
           ),
-          'app/config/constants': {
-            singleton: true,
-            import: 'app/config/constants',
-            requiredVersion: appVersion,
-          },
-          'app/config/store': {
-            singleton: true,
-            import: 'app/config/store',
-            requiredVersion: appVersion,
-          },
-          'app/shared/error/error-boundary-routes': {
-            singleton: true,
-            import: 'app/shared/error/error-boundary-routes',
-            requiredVersion: appVersion,
-          },
-          'app/shared/layout/menus/menu-components': {
-            singleton: true,
-            import: 'app/shared/layout/menus/menu-components',
-            requiredVersion: appVersion,
-          },
-          'app/shared/layout/menus/menu-item': {
-            singleton: true,
-            import: 'app/shared/layout/menus/menu-item',
-            requiredVersion: appVersion,
-          },
-          'app/shared/reducers': {
-            singleton: true,
-            import: 'app/shared/reducers',
-            requiredVersion: appVersion,
-          },
-          'app/shared/reducers/locale': {
-            singleton: true,
-            import: 'app/shared/reducers/locale',
-            requiredVersion: appVersion,
-          },
-          'app/shared/reducers/reducer.utils': {
-            singleton: true,
-            import: 'app/shared/reducers/reducer.utils',
-            requiredVersion: appVersion,
-          },
-          'app/shared/util/date-utils': {
-            singleton: true,
-            import: 'app/shared/util/date-utils',
-            requiredVersion: appVersion,
-          },
-          'app/shared/util/entity-utils': {
-            singleton: true,
-            import: 'app/shared/util/entity-utils',
-            requiredVersion: appVersion,
-          },
         },
       }),
     ],

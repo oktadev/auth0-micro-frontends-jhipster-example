@@ -3,7 +3,7 @@ import axios from 'axios';
 import thunk from 'redux-thunk';
 import sinon from 'sinon';
 
-import userManagement, { getUsers, reset } from 'app/shared/reducers/user-management';
+import userManagement, { getUsers } from 'app/shared/reducers/user-management';
 
 describe('User management reducer tests', () => {
   const initialState = {
@@ -24,7 +24,7 @@ describe('User management reducer tests', () => {
           type: getUsers.rejected.type,
           payload: 'something happened',
           error: { message: 'error happened' },
-        })
+        }),
       ).toEqual({ ...initialState, errorMessage: 'error happened' });
     });
   });

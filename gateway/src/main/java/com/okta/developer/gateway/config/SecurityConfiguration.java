@@ -1,5 +1,7 @@
 package com.okta.developer.gateway.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.PREFERRED_USERNAME;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -13,17 +15,16 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,20 +46,18 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter.Mode;
 import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher;
-import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.zalando.problem.spring.webflux.advice.security.SecurityProblemSupport;
 import reactor.core.publisher.Mono;
 import tech.jhipster.config.JHipsterProperties;
 import tech.jhipster.web.filter.reactive.CookieCsrfFilter;
 
-@EnableWebFluxSecurity
+@Configuration
 @EnableReactiveMethodSecurity
-@Import(SecurityProblemSupport.class)
 public class SecurityConfiguration {
 
     private final JHipsterProperties jHipsterProperties;
@@ -77,74 +76,69 @@ public class SecurityConfiguration {
         .recordStats()
         .build();
 
-    private final SecurityProblemSupport problemSupport;
-    private final CorsWebFilter corsWebFilter;
-
-    public SecurityConfiguration(
-        ReactiveClientRegistrationRepository clientRegistrationRepository,
-        JHipsterProperties jHipsterProperties,
-        SecurityProblemSupport problemSupport,
-        CorsWebFilter corsWebFilter
-    ) {
+    public SecurityConfiguration(ReactiveClientRegistrationRepository clientRegistrationRepository, JHipsterProperties jHipsterProperties) {
         this.clientRegistrationRepository = clientRegistrationRepository;
         this.jHipsterProperties = jHipsterProperties;
-        this.problemSupport = problemSupport;
-        this.corsWebFilter = corsWebFilter;
     }
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        // @formatter:off
         http
-            .securityMatcher(new NegatedServerWebExchangeMatcher(new OrServerWebExchangeMatcher(
-                pathMatchers("/app/**", "/_app/**", "/i18n/**", "/img/**", "/content/**", "/swagger-ui/**", "/v3/api-docs/**", "/test/**"),
-                pathMatchers(HttpMethod.OPTIONS, "/**")
-            )))
-            .csrf()
-                .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
-        .and()
+            .securityMatcher(
+                new NegatedServerWebExchangeMatcher(
+                    new OrServerWebExchangeMatcher(pathMatchers("/app/**", "/i18n/**", "/content/**", "/swagger-ui/**"))
+                )
+            )
+            .cors(withDefaults())
+            .csrf(csrf ->
+                csrf
+                    .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
+                    // See https://stackoverflow.com/q/74447118/65681
+                    .csrfTokenRequestHandler(new ServerCsrfTokenRequestAttributeHandler())
+            )
             // See https://github.com/spring-projects/spring-security/issues/5766
             .addFilterAt(new CookieCsrfFilter(), SecurityWebFiltersOrder.REACTOR_CONTEXT)
-            .addFilterBefore(corsWebFilter, SecurityWebFiltersOrder.REACTOR_CONTEXT)
-            .addFilterAt(new SpaWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
-            .exceptionHandling()
-                .accessDeniedHandler(problemSupport)
-                .authenticationEntryPoint(problemSupport)
-        .and()
-            .headers()
-                .contentSecurityPolicy(jHipsterProperties.getSecurity().getContentSecurityPolicy())
-            .and()
-                .referrerPolicy(ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
-            .and()
-                .permissionsPolicy().policy("camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()")
-            .and()
-                .frameOptions().mode(Mode.DENY)
-        .and()
-            .authorizeExchange()
-            .pathMatchers("/").permitAll()
-            .pathMatchers("/*.*").permitAll()
-            .pathMatchers("/api/authenticate").permitAll()
-            .pathMatchers("/api/auth-info").permitAll()
-            .pathMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .pathMatchers("/api/**").authenticated()
-            // microfrontend resources are loaded by webpack without authentication, they need to be public
-            .pathMatchers("/services/*/*.js").permitAll()
-            .pathMatchers("/services/*/*.js.map").permitAll()
-            .pathMatchers("/services/*/v3/api-docs").hasAuthority(AuthoritiesConstants.ADMIN)
-            .pathMatchers("/services/**").authenticated()
-            .pathMatchers("/management/health").permitAll()
-            .pathMatchers("/management/health/**").permitAll()
-            .pathMatchers("/management/info").permitAll()
-            .pathMatchers("/management/prometheus").permitAll()
-            .pathMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
-
-        http.oauth2Login(oauth2 -> oauth2.authorizationRequestResolver(authorizationRequestResolver(this.clientRegistrationRepository)))
-            
-            .oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(jwtAuthenticationConverter());
-        http.oauth2Client();
-        // @formatter:on
+            .addFilterAfter(new SpaWebFilter(), SecurityWebFiltersOrder.HTTPS_REDIRECT)
+            .headers(headers ->
+                headers
+                    .contentSecurityPolicy(csp -> csp.policyDirectives(jHipsterProperties.getSecurity().getContentSecurityPolicy()))
+                    .frameOptions(frameOptions -> frameOptions.mode(Mode.DENY))
+                    .referrerPolicy(referrer ->
+                        referrer.policy(ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                    )
+                    .permissionsPolicy(permissions ->
+                        permissions.policy(
+                            "camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()"
+                        )
+                    )
+            )
+            .authorizeExchange(authz ->
+                // prettier-ignore
+                authz
+                    .pathMatchers("/").permitAll()
+                    .pathMatchers("/*.*").permitAll()
+                    .pathMatchers("/api/authenticate").permitAll()
+                    .pathMatchers("/api/auth-info").permitAll()
+                    .pathMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
+                    .pathMatchers("/api/**").authenticated()
+                    // microfrontend resources are loaded by webpack without authentication, they need to be public
+                    .pathMatchers("/services/*/*.js").permitAll()
+                    .pathMatchers("/services/*/*.txt").permitAll()
+                    .pathMatchers("/services/*/*.json").permitAll()
+                    .pathMatchers("/services/*/*.js.map").permitAll()
+                    .pathMatchers("/services/*/management/health/readiness").permitAll()
+                    .pathMatchers("/services/*/v3/api-docs").hasAuthority(AuthoritiesConstants.ADMIN)
+                    .pathMatchers("/services/**").authenticated()
+                    .pathMatchers("/v3/api-docs/**").hasAuthority(AuthoritiesConstants.ADMIN)
+                    .pathMatchers("/management/health").permitAll()
+                    .pathMatchers("/management/health/**").permitAll()
+                    .pathMatchers("/management/info").permitAll()
+                    .pathMatchers("/management/prometheus").permitAll()
+                    .pathMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
+            )
+            .oauth2Login(oauth2 -> oauth2.authorizationRequestResolver(authorizationRequestResolver(this.clientRegistrationRepository)))
+            .oauth2Client(withDefaults())
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
         return http.build();
     }
 
@@ -170,6 +164,7 @@ public class SecurityConfiguration {
     Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new JwtGrantedAuthorityConverter());
+        jwtAuthenticationConverter.setPrincipalClaimName(PREFERRED_USERNAME);
         return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
     }
 
@@ -200,7 +195,7 @@ public class SecurityConfiguration {
                             }
                         });
 
-                    return new DefaultOidcUser(mappedAuthorities, user.getIdToken(), user.getUserInfo());
+                    return new DefaultOidcUser(mappedAuthorities, user.getIdToken(), user.getUserInfo(), PREFERRED_USERNAME);
                 });
         };
     }
@@ -239,13 +234,13 @@ public class SecurityConfiguration {
                 if (jwt.hasClaim("given_name") && jwt.hasClaim("family_name")) {
                     return Mono.just(jwt);
                 }
-                // Retrieve user info from OAuth provider if not already loaded
-                return users.get(
-                    jwt.getSubject(),
-                    s -> {
-                        WebClient webClient = WebClient.create();
-
-                        return webClient
+                // Get user info from `users` cache if present
+                return Optional
+                    .ofNullable(users.getIfPresent(jwt.getSubject()))
+                    // Retrieve user info from OAuth provider if not already loaded
+                    .orElseGet(() ->
+                        WebClient
+                            .create()
                             .get()
                             .uri(userInfoUri)
                             .headers(headers -> headers.setBearerAuth(token))
@@ -275,9 +270,10 @@ public class SecurityConfiguration {
                                     })
                                     .claims(claims -> claims.putAll(jwt.getClaims()))
                                     .build()
-                            );
-                    }
-                );
+                            )
+                            // Put user info into the `users` cache
+                            .doOnNext(newJwt -> users.put(jwt.getSubject(), Mono.just(newJwt)))
+                    );
             }
         };
     }

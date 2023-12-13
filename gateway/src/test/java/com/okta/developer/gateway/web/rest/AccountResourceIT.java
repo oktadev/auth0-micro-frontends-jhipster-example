@@ -24,7 +24,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
  * Integration tests for the {@link AccountResource} REST controller.
  */
 @AutoConfigureWebTestClient(timeout = IntegrationTest.DEFAULT_TIMEOUT)
-@WithMockUser(value = TEST_USER_LOGIN)
 @IntegrationTest
 class AccountResourceIT {
 
@@ -73,7 +72,7 @@ class AccountResourceIT {
 
     @Test
     void testGetUnknownAccount() {
-        webTestClient.get().uri("/api/account").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().is5xxServerError();
+        webTestClient.get().uri("/api/account").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().is3xxRedirection();
     }
 
     @Test
@@ -91,6 +90,7 @@ class AccountResourceIT {
     }
 
     @Test
+    @WithMockUser(TEST_USER_LOGIN)
     void testAuthenticatedUser() {
         webTestClient
             .get()

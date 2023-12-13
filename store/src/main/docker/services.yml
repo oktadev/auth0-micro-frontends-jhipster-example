@@ -1,0 +1,19 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+name: store
+services:
+  mongodb:
+    extends:
+      file: ./mongodb.yml
+      service: mongodb
+  keycloak:
+    extends:
+      file: ./keycloak.yml
+      service: keycloak
+  consul:
+    extends:
+      file: ./consul.yml
+      service: consul
+  consul-config-loader:
+    extends:
+      file: ./consul.yml
+      service: consul-config-loader

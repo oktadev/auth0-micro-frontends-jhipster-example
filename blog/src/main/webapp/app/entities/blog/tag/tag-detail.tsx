@@ -4,7 +4,6 @@ import { Button, Row, Col } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './tag.reducer';
@@ -38,6 +37,19 @@ export const TagDetail = () => {
             </span>
           </dt>
           <dd>{tagEntity.name}</dd>
+          <dt>
+            <Translate contentKey="blogApp.blogTag.post">Post</Translate>
+          </dt>
+          <dd>
+            {tagEntity.posts
+              ? tagEntity.posts.map((val, i) => (
+                  <span key={val.id}>
+                    <a>{val.id}</a>
+                    {tagEntity.posts && i === tagEntity.posts.length - 1 ? '' : ', '}
+                  </span>
+                ))
+              : null}
+          </dd>
         </dl>
         <Button tag={Link} to="/blog/tag" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

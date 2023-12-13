@@ -1,6 +1,6 @@
 # gateway
 
-This application was generated using JHipster 7.9.3, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v7.9.3](https://www.jhipster.tech/documentation-archive/v7.9.3).
+This application was generated using JHipster 8.1.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.1.0](https://www.jhipster.tech/documentation-archive/v8.1.0).
 
 This is a "gateway" application intended to be part of a microservice architecture, please refer to the [Doing microservices with JHipster][] page of the documentation for more information.
 This application is configured for Service Discovery and Configuration with Consul. On launch, it will refuse to start if it is not able to connect to Consul at [http://localhost:8500](http://localhost:8500). For more information, read our documentation on [Service Discovery and Configuration with Consul][].
@@ -25,110 +25,6 @@ In the project root, JHipster generates configuration files for tools like git, 
 
 ## Development
 
-Before you can build this project, you must install and configure the following dependencies on your machine:
-
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
-
-After installing Node, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in [package.json](package.json).
-
-```
-npm install
-```
-
-We use npm scripts and [Webpack][] as our build system.
-
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
-
-```
-./gradlew -x webapp
-npm start
-```
-
-Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
-Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
-
-The `npm run` command will list all of the scripts available to run for this project.
-
-### PWA Support
-
-JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
-
-The service worker initialization code is commented out by default. To enable it, uncomment the following code in `src/main/webapp/index.html`:
-
-```html
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(function () {
-      console.log('Service Worker Registered');
-    });
-  }
-</script>
-```
-
-Note: [Workbox](https://developers.google.com/web/tools/workbox/) powers JHipster's service worker. It dynamically generates the `service-worker.js` file.
-
-### Managing dependencies
-
-For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
-
-```
-npm install --save --save-exact leaflet
-```
-
-To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
-
-```
-npm install --save-dev --save-exact @types/leaflet
-```
-
-Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
-Note: There are still a few other things remaining to do for Leaflet that we won't detail here.
-
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
-
-### Developing Microfrontend
-
-Microservices doesn't contain every required backend feature to allow microfrontends to run alone.
-You must start a pre-built gateway version or from source.
-
-Start gateway from source:
-
-```
-cd gateway
-npm run docker:db:up # start database if necessary
-npm run docker:others:up # start service discovery and authentication service if necessary
-npm run app:start # alias for ./(mvnw|gradlew)
-```
-
-Microfrontend's `build-watch` script is configured to watch and compile microfrontend's sources and synchronizes with gateway's frontend.
-Start it using:
-
-```
-cd microfrontend
-npm run docker:db:up # start database if necessary
-npm run build-watch
-```
-
-It's possible to run microfrontend's frontend standalone using:
-
-```
-cd microfrontend
-npm run docker:db:up # start database if necessary
-npm watch # alias for `npm start` and `npm run backend:start` in parallel
-```
-
-### JHipster Control Center
-
-JHipster Control Center can help you manage and control your application(s). You can start a local control center server (accessible on http://localhost:7419) with:
-
-```
-docker-compose -f src/main/docker/jhipster-control-center.yml up
-```
-
 ### OAuth 2.0 / OpenID Connect
 
 Congratulations! You've selected an excellent way to secure your JHipster application. If you're not sure what OAuth and OpenID Connect (OIDC) are, please see [What the Heck is OAuth?](https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth)
@@ -136,7 +32,7 @@ Congratulations! You've selected an excellent way to secure your JHipster applic
 To log in to your app, you'll need to have [Keycloak](https://keycloak.org) up and running. The JHipster Team has created a Docker container for you that has the default users and roles. Start Keycloak using the following command.
 
 ```
-docker-compose -f src/main/docker/keycloak.yml up
+docker compose -f src/main/docker/keycloak.yml up
 ```
 
 The security settings in `src/main/resources/config/application.yml` are configured for this image.
@@ -279,6 +175,101 @@ export CYPRESS_E2E_PASSWORD="<your-password>"
 See Cypress' documentation for setting OS [environment variables](https://docs.cypress.io/guides/guides/environment-variables#Setting) to learn more.
 
 **Auth0 requires a user to provide authorization consent on the first login.** Consent flow is currently not handled in the Cypress test suite. To mitigate the issue, you can use a user account that has already granted consent to authorize application access via interactive login.
+Before you can build this project, you must install and configure the following dependencies on your machine:
+
+1. [Node.js][]: We use Node to run a development web server and build the project.
+   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
+
+After installing Node, you should be able to run the following command to install development tools.
+You will only need to run this command when dependencies change in [package.json](package.json).
+
+```
+npm install
+```
+
+We use npm scripts and [Webpack][] as our build system.
+
+Run the following commands in two separate terminals to create a blissful development experience where your browser
+auto-refreshes when files change on your hard drive.
+
+```
+./gradlew -x webapp
+npm start
+```
+
+Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
+specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
+Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
+
+The `npm run` command will list all of the scripts available to run for this project.
+
+### PWA Support
+
+JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
+
+The service worker initialization code is commented out by default. To enable it, uncomment the following code in `src/main/webapp/index.html`:
+
+```html
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js').then(function () {
+      console.log('Service Worker Registered');
+    });
+  }
+</script>
+```
+
+Note: [Workbox](https://developers.google.com/web/tools/workbox/) powers JHipster's service worker. It dynamically generates the `service-worker.js` file.
+
+### Managing dependencies
+
+For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
+
+```
+npm install --save --save-exact leaflet
+```
+
+To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
+
+```
+npm install --save-dev --save-exact @types/leaflet
+```
+
+Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
+Note: There are still a few other things remaining to do for Leaflet that we won't detail here.
+
+For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
+
+### Developing Microfrontend
+
+Microservices doesn't contain every required backend feature to allow microfrontends to run alone.
+You must start a pre-built gateway version or from source.
+
+Start gateway from source:
+
+```
+cd gateway
+npm run docker:db:up # start database if necessary
+npm run docker:others:up # start service discovery and authentication service if necessary
+npm run app:start # alias for ./(mvnw|gradlew)
+```
+
+Microfrontend's `build-watch` script is configured to watch and compile microfrontend's sources and synchronizes with gateway's frontend.
+Start it using:
+
+```
+cd microfrontend
+npm run docker:db:up # start database if necessary
+npm run build-watch
+```
+
+It's possible to run microfrontend's frontend standalone using:
+
+```
+cd microfrontend
+npm run docker:db:up # start database if necessary
+npm watch # alias for `npm start` and `npm run backend:start` in parallel
+```
 
 ## Building for production
 
@@ -309,7 +300,17 @@ To package your application as a war in order to deploy it to an application ser
 ./gradlew -Pprod -Pwar clean bootWar
 ```
 
+### JHipster Control Center
+
+JHipster Control Center can help you manage and control your application(s). You can start a local control center server (accessible on http://localhost:7419) with:
+
+```
+docker compose -f src/main/docker/jhipster-control-center.yml up
+```
+
 ## Testing
+
+### Spring Boot tests
 
 To launch your application's tests, run:
 
@@ -334,42 +335,49 @@ You can execute automated [lighthouse audits][https://developers.google.com/web/
 You should only run the audits when your application is packaged with the production profile.
 The lighthouse report is created in `build/cypress/lhreport.html`
 
-For more information, refer to the [Running tests page][].
+## Others
 
-### Code quality
+### Code quality using Sonar
 
 Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
 
 ```
-docker-compose -f src/main/docker/sonar.yml up -d
+docker compose -f src/main/docker/sonar.yml up -d
 ```
 
-Note: we have turned off authentication in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
+Note: we have turned off forced authentication redirect for UI in [src/main/docker/sonar.yml](src/main/docker/sonar.yml) for out of the box experience while trying out SonarQube, for real use cases turn it back on.
 
 You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the gradle plugin.
 
 Then, run a Sonar analysis:
 
 ```
-./gradlew -Pprod clean check jacocoTestReport sonarqube
+./gradlew -Pprod clean check jacocoTestReport sonarqube -Dsonar.login=admin -Dsonar.password=admin
+```
+
+Additionally, Instead of passing `sonar.password` and `sonar.login` as CLI arguments, these parameters can be configured from [sonar-project.properties](sonar-project.properties) as shown below:
+
+```
+sonar.login=admin
+sonar.password=admin
 ```
 
 For more information, refer to the [Code quality page][].
 
-## Using Docker to simplify development (optional)
+### Using Docker to simplify development (optional)
 
 You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
 
 For example, to start a postgresql database in a docker container, run:
 
 ```
-docker-compose -f src/main/docker/postgresql.yml up -d
+docker compose -f src/main/docker/postgresql.yml up -d
 ```
 
 To stop it and remove the container, run:
 
 ```
-docker-compose -f src/main/docker/postgresql.yml down
+docker compose -f src/main/docker/postgresql.yml down
 ```
 
 You can also fully dockerize your application and all the services that it depends on.
@@ -388,7 +396,7 @@ npm run java:docker:arm64
 Then run:
 
 ```
-docker-compose -f src/main/docker/app.yml up -d
+docker compose -f src/main/docker/app.yml up -d
 ```
 
 When running Docker Desktop on MacOS Big Sur or later, consider enabling experimental `Use the new Virtualization framework` for better processing performance ([disk access performance is worse](https://github.com/docker/roadmap/issues/7)).
@@ -399,21 +407,21 @@ For more information refer to [Using Docker and Docker-Compose][], this page als
 
 To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
-[jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 7.9.3 archive]: https://www.jhipster.tech/documentation-archive/v7.9.3
-[doing microservices with jhipster]: https://www.jhipster.tech/documentation-archive/v7.9.3/microservices-architecture/
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v7.9.3/development/
-[service discovery and configuration with consul]: https://www.jhipster.tech/documentation-archive/v7.9.3/microservices-architecture/#consul
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v7.9.3/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v7.9.3/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v7.9.3/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v7.9.3/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v7.9.3/setting-up-ci/
-[node.js]: https://nodejs.org/
-[npm]: https://www.npmjs.com/
-[webpack]: https://webpack.github.io/
-[browsersync]: https://www.browsersync.io/
-[jest]: https://facebook.github.io/jest/
-[cypress]: https://www.cypress.io/
-[leaflet]: https://leafletjs.com/
-[definitelytyped]: https://definitelytyped.org/
+[JHipster Homepage and latest documentation]: https://www.jhipster.tech
+[JHipster 8.1.0 archive]: https://www.jhipster.tech/documentation-archive/v8.1.0
+[Doing microservices with JHipster]: https://www.jhipster.tech/documentation-archive/v8.1.0/microservices-architecture/
+[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v8.1.0/development/
+[Service Discovery and Configuration with Consul]: https://www.jhipster.tech/documentation-archive/v8.1.0/microservices-architecture/#consul
+[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v8.1.0/docker-compose
+[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v8.1.0/production/
+[Running tests page]: https://www.jhipster.tech/documentation-archive/v8.1.0/running-tests/
+[Code quality page]: https://www.jhipster.tech/documentation-archive/v8.1.0/code-quality/
+[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v8.1.0/setting-up-ci/
+[Node.js]: https://nodejs.org/
+[NPM]: https://www.npmjs.com/
+[Webpack]: https://webpack.github.io/
+[BrowserSync]: https://www.browsersync.io/
+[Jest]: https://facebook.github.io/jest/
+[Cypress]: https://www.cypress.io/
+[Leaflet]: https://leafletjs.com/
+[DefinitelyTyped]: https://definitelytyped.org/

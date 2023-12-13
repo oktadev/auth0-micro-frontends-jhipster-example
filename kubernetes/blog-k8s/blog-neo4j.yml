@@ -19,7 +19,7 @@ metadata:
     app: blog-neo4j
 type: Opaque
 data:
-  neo4j-password: MTRiYTFkNWRhZDRkYTJkZjI4NzkwMTlmZmM4ODc2MmM1MzEyODk0N2Y1YTViYjA5YThjYzdiMWJmZDQ5
+  neo4j-password: MDYzZmYxMDNhYmU5ZDFmMzdhNjBjOTNjZTFiZDNmZWVhZGIwYzJjNTE3NzViYmYxZTg4ZjAyZjYwNjU1
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -43,7 +43,7 @@ spec:
             claimName: blog-neo4j-pvc
       containers:
         - name: neo4j
-          image: neo4j:4.4.9
+          image: neo4j:5.14.0
           env:
             - name: NEO4J_AUTH
               value: "none"

@@ -43,26 +43,26 @@ $ kubectl get svc gateway -n demo
 
 ## Scaling your deployments
 
-You can scale your apps using
+You can scale your apps using:
 
 ```
-$ kubectl scale deployment <app-name> --replicas <replica-count> -n demo
+kubectl scale deployment <app-name> --replicas <replica-count> -n demo
 ```
 
-## zero-downtime deployments
+## Zero-downtime deployments
 
-The default way to update a running app in kubernetes, is to deploy a new image tag to your docker registry and then deploy it using
+The default way to update a running app in kubernetes, is to deploy a new image tag to your docker registry and then deploy it using:
 
 ```
-$ kubectl set image deployment/<app-name>-app <app-name>=<new-image>  -n demo
+kubectl set image deployment/<app-name>-app <app-name>=<new-image>  -n demo
 ```
 
-Using livenessProbes and readinessProbe allow you to tell Kubernetes about the state of your applications, in order to ensure availablity of your services. You will need minimum 2 replicas for every application deployment if you want to have zero-downtime deployed.
+Using livenessProbes and readinessProbe allow you to tell Kubernetes about the state of your applications, in order to ensure availability of your services. You will need a minimum of two replicas for every application deployment if you want to have zero-downtime.
 This is because the rolling upgrade strategy first stops a running replica in order to place a new. Running only one replica, will cause a short downtime during upgrades.
 
 ## Troubleshooting
 
-> my apps doesn't get pulled, because of 'imagePullBackof'
+> my app doesn't get pulled, because of 'imagePullBackof'
 
 Check the docker registry your Kubernetes cluster is accessing. If you are using a private registry, you should add it to your namespace by `kubectl create secret docker-registry` (check the [docs](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/) for more info)
 

@@ -1,4 +1,4 @@
 /**
- * Spring Framework configuration files.
+ * Application configuration.
  */
 package com.okta.developer.blog.config;

@@ -1,10 +1,10 @@
 {
+  "annotations": {
+    "changelogDate": "20231211151410"
+  },
   "applications": ["blog"],
-  "changelogDate": "20220911050014",
   "clientRootFolder": "blog",
   "databaseType": "neo4j",
-  "dto": "no",
-  "embedded": false,
   "entityTableName": "tag",
   "fields": [
     {
@@ -14,20 +14,17 @@
       "fieldValidateRulesMinlength": "2"
     }
   ],
-  "fluentMethods": true,
-  "jpaMetamodelFiltering": false,
   "microserviceName": "blog",
   "name": "Tag",
   "pagination": "infinite-scroll",
-  "readOnly": false,
   "relationships": [
     {
       "otherEntityName": "post",
       "otherEntityRelationshipName": "tag",
-      "ownerSide": false,
       "relationshipName": "post",
+      "relationshipSide": "right",
       "relationshipType": "many-to-many"
     }
   ],
-  "service": "no"
+  "searchEngine": "no"
 }

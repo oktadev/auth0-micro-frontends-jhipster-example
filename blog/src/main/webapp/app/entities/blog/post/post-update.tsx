@@ -49,6 +49,7 @@ export const PostUpdate = () => {
     }
   }, [updateSuccess]);
 
+  // eslint-disable-next-line complexity
   const saveEntity = values => {
     values.date = convertDateTimeToServer(values.date);
 

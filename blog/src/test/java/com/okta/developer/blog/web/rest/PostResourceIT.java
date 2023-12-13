@@ -8,22 +8,17 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import com.okta.developer.blog.IntegrationTest;
 import com.okta.developer.blog.domain.Post;
 import com.okta.developer.blog.repository.PostRepository;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.util.Base64Utils;
 
 /**
  * Integration tests for the {@link PostResource} REST controller.
@@ -226,7 +221,7 @@ class PostResourceIT {
         webTestClient
             .get()
             .uri(ENTITY_API_URL_ID, Long.MAX_VALUE)
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_PROBLEM_JSON)
             .exchange()
             .expectStatus()
             .isNotFound();
@@ -332,6 +327,8 @@ class PostResourceIT {
         Post partialUpdatedPost = new Post();
         partialUpdatedPost.setId(post.getId());
 
+        partialUpdatedPost.content(UPDATED_CONTENT);
+
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedPost.getId())
@@ -346,7 +343,7 @@ class PostResourceIT {
         assertThat(postList).hasSize(databaseSizeBeforeUpdate);
         Post testPost = postList.get(postList.size() - 1);
         assertThat(testPost.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testPost.getContent()).isEqualTo(DEFAULT_CONTENT);
+        assertThat(testPost.getContent()).isEqualTo(UPDATED_CONTENT);
         assertThat(testPost.getDate()).isEqualTo(DEFAULT_DATE);
     }
 

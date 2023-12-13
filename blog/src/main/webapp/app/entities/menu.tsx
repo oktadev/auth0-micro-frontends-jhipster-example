@@ -15,11 +15,11 @@ const EntitiesMenu = () => {
   return (
     <>
       {/* prettier-ignore */}
-      <MenuItem icon="asterisk" to="/blog/post">
-        <Translate contentKey="global.menu.entities.blogPost" />
-      </MenuItem>
       <MenuItem icon="asterisk" to="/blog/blog">
         <Translate contentKey="global.menu.entities.blogBlog" />
+      </MenuItem>
+      <MenuItem icon="asterisk" to="/blog/post">
+        <Translate contentKey="global.menu.entities.blogPost" />
       </MenuItem>
       <MenuItem icon="asterisk" to="/blog/tag">
         <Translate contentKey="global.menu.entities.blogTag" />

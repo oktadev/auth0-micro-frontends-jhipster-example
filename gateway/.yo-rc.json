@@ -1,32 +1,28 @@
 {
   "generator-jhipster": {
-    "applicationIndex": 2,
+    "applicationIndex": 0,
     "applicationType": "gateway",
+    "applications": {
+      "blog": {
+        "applicationIndex": 1,
+        "clientFramework": "react",
+        "serverPort": "8081"
+      },
+      "store": {
+        "applicationIndex": 2,
+        "clientFramework": "react",
+        "serverPort": "8082"
+      }
+    },
     "authenticationType": "oauth2",
     "baseName": "gateway",
-    "blueprints": [],
     "buildTool": "gradle",
-    "cacheProvider": "no",
     "clientFramework": "react",
-    "clientPackageManager": "npm",
-    "clientTheme": "none",
-    "clientThemeVariant": "",
-    "creationTimestamp": 1662872235067,
-    "databaseType": "sql",
-    "devDatabaseType": "h2Disk",
-    "devServerPort": 9062,
-    "dtoSuffix": "DTO",
-    "enableGradleEnterprise": false,
-    "enableHibernateCache": false,
-    "enableSwaggerCodegen": false,
-    "enableTranslation": true,
-    "entitySuffix": "",
-    "gradleEnterpriseHost": "",
-    "jhiPrefix": "jhi",
-    "jhipsterVersion": "7.9.3",
-    "jwtSecretKey": "ODUzOWRlZGRjYWQ2N2I3YTY3OTNkYjM4YTE5ZWJkNjNlOTkwZDEzNWQ2NTQyOThlODM5ODcxOWMwYmIxYzM3ZGRjZjEyNTMyODViODQ4NzIyNjU0ZmQ0YjIxNjViYzc0MzkyZjllYzk0YTA3NTljYzQxNmQ4NTBiZWUxMmY5MmM=",
+    "devServerPort": 9060,
+    "entities": [],
+    "jhipsterVersion": "8.1.0",
+    "jwtSecretKey": "M2E2Njg2ODQ3ZWUxMmVmMGQ1N2FlYzg1Zjg5NjYyZTJkNjc3OWU3OWM5MGY0MGQzMmZhODRlYTE2ZjM1YTU4YzE3N2I5ZDI3OWJjM2U0OTAyN2Y3NjViYmJkMmFmZGU3NTRlZjE5YmJhMGIwZjhiZTUzNmViYWZkYjg3M2VjYjE=",
     "languages": ["en"],
-    "messageBroker": false,
     "microfrontends": [
       {
         "baseName": "blog"
@@ -37,22 +33,13 @@
     ],
     "monorepository": true,
     "nativeLanguage": "en",
-    "otherModules": [],
     "packageFolder": "com/okta/developer/gateway",
     "packageName": "com.okta.developer.gateway",
-    "pages": [],
     "prodDatabaseType": "postgresql",
     "reactive": true,
-    "searchEngine": false,
-    "serverPort": "8080",
     "serviceDiscoveryType": "consul",
-    "skipCheckLengthOfIdentifier": false,
-    "skipClient": false,
     "skipCommitHook": true,
-    "skipFakeData": false,
     "skipUserManagement": true,
-    "testFrameworks": ["cypress"],
-    "websocket": false,
-    "withAdminUi": true
+    "testFrameworks": ["cypress"]
   }
 }

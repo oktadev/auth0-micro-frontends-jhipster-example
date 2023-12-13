@@ -15,11 +15,7 @@ describe('Post e2e test', () => {
   const postPageUrlPattern = new RegExp('/blog/post(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const postSample = {
-    title: 'Associate programming transmitter',
-    content: 'Li4vZmFrZS1kYXRhL2Jsb2IvaGlwc3Rlci50eHQ=',
-    date: '2022-09-10T20:03:11.287Z',
-  };
+  const postSample = { title: 'after about toward', content: 'Li4vZmFrZS1kYXRhL2Jsb2IvaGlwc3Rlci50eHQ=', date: '2023-12-10T19:26:56.321Z' };
 
   let post;
 
@@ -99,7 +95,7 @@ describe('Post e2e test', () => {
                 link: '<http://localhost/services/blog/api/posts?page=0&size=20>; rel="last",<http://localhost/services/blog/api/posts?page=0&size=20>; rel="first"',
               },
               body: [post],
-            }
+            },
           ).as('entitiesRequestInternal');
         });
 
@@ -166,14 +162,15 @@ describe('Post e2e test', () => {
     });
 
     it('should create an instance of Post', () => {
-      cy.get(`[data-cy="title"]`).type('pink').should('have.value', 'pink');
+      cy.get(`[data-cy="title"]`).type('queasily');
+      cy.get(`[data-cy="title"]`).should('have.value', 'queasily');
 
-      cy.get(`[data-cy="content"]`)
-        .type('../fake-data/blob/hipster.txt')
-        .invoke('val')
-        .should('match', new RegExp('../fake-data/blob/hipster.txt'));
+      cy.get(`[data-cy="content"]`).type('../fake-data/blob/hipster.txt');
+      cy.get(`[data-cy="content"]`).invoke('val').should('match', new RegExp('../fake-data/blob/hipster.txt'));
 
-      cy.get(`[data-cy="date"]`).type('2022-09-10T17:55').blur().should('have.value', '2022-09-10T17:55');
+      cy.get(`[data-cy="date"]`).type('2023-12-10T22:46');
+      cy.get(`[data-cy="date"]`).blur();
+      cy.get(`[data-cy="date"]`).should('have.value', '2023-12-10T22:46');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

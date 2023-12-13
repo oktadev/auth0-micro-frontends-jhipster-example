@@ -2,7 +2,6 @@ package com.okta.developer.gateway.repository.rowmapper;
 
 import com.okta.developer.gateway.domain.User;
 import io.r2dbc.spi.Row;
-import java.time.Instant;
 import java.util.function.BiFunction;
 import org.springframework.stereotype.Service;
 

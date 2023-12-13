@@ -1,30 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Translate, getSortState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { ASC, DESC, SORT } from 'app/shared/util/pagination.constants';
+import { overrideSortStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IBlog } from 'app/shared/model/blog/blog.model';
 import { getEntities } from './blog.reducer';
 
 export const Blog = () => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
+  const pageLocation = useLocation();
   const navigate = useNavigate();
+
+  const [sortState, setSortState] = useState(overrideSortStateWithQueryParams(getSortState(pageLocation, 'id'), pageLocation.search));
 
   const blogList = useAppSelector(state => state.blog.blog.entities);
   const loading = useAppSelector(state => state.blog.blog.loading);
 
+  const getAllEntities = () => {
+    dispatch(
+      getEntities({
+        sort: `${sortState.sort},${sortState.order}`,
+      }),
+    );
+  };
+
+  const sortEntities = () => {
+    getAllEntities();
+    const endURL = `?sort=${sortState.sort},${sortState.order}`;
+    if (pageLocation.search !== endURL) {
+      navigate(`${pageLocation.pathname}${endURL}`);
+    }
+  };
+
   useEffect(() => {
-    dispatch(getEntities({}));
-  }, []);
+    sortEntities();
+  }, [sortState.order, sortState.sort]);
+
+  const sort = p => () => {
+    setSortState({
+      ...sortState,
+      order: sortState.order === ASC ? DESC : ASC,
+      sort: p,
+    });
+  };
 
   const handleSyncList = () => {
-    dispatch(getEntities({}));
+    sortEntities();
+  };
+
+  const getSortIconByFieldName = (fieldName: string) => {
+    const sortFieldName = sortState.sort;
+    const order = sortState.order;
+    if (sortFieldName !== fieldName) {
+      return faSort;
+    } else {
+      return order === ASC ? faSortUp : faSortDown;
+    }
   };
 
   return (
@@ -48,17 +84,18 @@ export const Blog = () => {
           <Table responsive>
             <thead>
               <tr>
-                <th>
-                  <Translate contentKey="blogApp.blogBlog.id">ID</Translate>
+                <th className="hand" onClick={sort('id')}>
+                  <Translate contentKey="blogApp.blogBlog.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
+                </th>
+                <th className="hand" onClick={sort('name')}>
+                  <Translate contentKey="blogApp.blogBlog.name">Name</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('name')} />
+                </th>
+                <th className="hand" onClick={sort('handle')}>
+                  <Translate contentKey="blogApp.blogBlog.handle">Handle</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('handle')} />
                 </th>
                 <th>
-                  <Translate contentKey="blogApp.blogBlog.name">Name</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="blogApp.blogBlog.handle">Handle</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="blogApp.blogBlog.user">User</Translate>
+                  <Translate contentKey="blogApp.blogBlog.user">User</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -88,7 +125,12 @@ export const Blog = () => {
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
                       </Button>
-                      <Button tag={Link} to={`/blog/blog/${blog.id}/delete`} color="danger" size="sm" data-cy="entityDeleteButton">
+                      <Button
+                        onClick={() => (window.location.href = `/blog/blog/${blog.id}/delete`)}
+                        color="danger"
+                        size="sm"
+                        data-cy="entityDeleteButton"
+                      >
                         <FontAwesomeIcon icon="trash" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.delete">Delete</Translate>

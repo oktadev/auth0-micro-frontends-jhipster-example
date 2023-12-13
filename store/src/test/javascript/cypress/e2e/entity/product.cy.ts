@@ -15,7 +15,7 @@ describe('Product e2e test', () => {
   const productPageUrlPattern = new RegExp('/store/product(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const productSample = { title: 'infomediaries Corporate', price: 38555 };
+  const productSample = { title: 'bankbook', price: 5851.29 };
 
   let product;
 
@@ -95,7 +95,7 @@ describe('Product e2e test', () => {
                 link: '<http://localhost/services/store/api/products?page=0&size=20>; rel="last",<http://localhost/services/store/api/products?page=0&size=20>; rel="first"',
               },
               body: [product],
-            }
+            },
           ).as('entitiesRequestInternal');
         });
 
@@ -162,9 +162,11 @@ describe('Product e2e test', () => {
     });
 
     it('should create an instance of Product', () => {
-      cy.get(`[data-cy="title"]`).type('XSS').should('have.value', 'XSS');
+      cy.get(`[data-cy="title"]`).type('walnut musty');
+      cy.get(`[data-cy="title"]`).should('have.value', 'walnut musty');
 
-      cy.get(`[data-cy="price"]`).type('57804').should('have.value', '57804');
+      cy.get(`[data-cy="price"]`).type('30132.21');
+      cy.get(`[data-cy="price"]`).should('have.value', '30132.21');
 
       cy.setFieldImageAsBytesOfEntity('image', 'integration-test.png', 'image/png');
 

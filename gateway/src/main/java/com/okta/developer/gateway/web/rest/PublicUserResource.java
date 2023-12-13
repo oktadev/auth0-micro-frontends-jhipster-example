@@ -3,18 +3,15 @@ package com.okta.developer.gateway.web.rest;
 import com.okta.developer.gateway.service.UserService;
 import com.okta.developer.gateway.service.dto.UserDTO;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.ForwardedHeaderUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.PaginationUtil;
@@ -32,7 +29,7 @@ public class PublicUserResource {
     }
 
     /**
-     * {@code GET /users} : get all users with only the public informations - calling this are allowed for anyone.
+     * {@code GET /users} : get all users with only public information - calling this method is allowed for anyone.
      *
      * @param request a {@link ServerHttpRequest} request.
      * @param pageable the pagination information.
@@ -41,14 +38,19 @@ public class PublicUserResource {
     @GetMapping("/users")
     public Mono<ResponseEntity<Flux<UserDTO>>> getAllPublicUsers(
         ServerHttpRequest request,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to get all public User names");
 
         return userService
             .countManagedUsers()
             .map(total -> new PageImpl<>(new ArrayList<>(), pageable, total))
-            .map(page -> PaginationUtil.generatePaginationHttpHeaders(UriComponentsBuilder.fromHttpRequest(request), page))
+            .map(page ->
+                PaginationUtil.generatePaginationHttpHeaders(
+                    ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
+                    page
+                )
+            )
             .map(headers -> ResponseEntity.ok().headers(headers).body(userService.getAllPublicUsers(pageable)));
     }
 

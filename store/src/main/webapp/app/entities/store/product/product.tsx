@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { openFile, byteSize, Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { openFile, byteSize, Translate, getPaginationState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IProduct } from 'app/shared/model/store/product.model';
 import { getEntities } from './product.reducer';
 
 export const Product = () => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
+  const pageLocation = useLocation();
   const navigate = useNavigate();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
 
   const productList = useAppSelector(state => state.store.product.entities);
@@ -32,15 +30,15 @@ export const Product = () => {
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
-      })
+      }),
     );
   };
 
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (location.search !== endURL) {
-      navigate(`${location.pathname}${endURL}`);
+    if (pageLocation.search !== endURL) {
+      navigate(`${pageLocation.pathname}${endURL}`);
     }
   };
 
@@ -49,7 +47,7 @@ export const Product = () => {
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(pageLocation.search);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
@@ -61,7 +59,7 @@ export const Product = () => {
         order: sortSplit[1],
       });
     }
-  }, [location.search]);
+  }, [pageLocation.search]);
 
   const sort = p => () => {
     setPaginationState({
@@ -79,6 +77,16 @@ export const Product = () => {
 
   const handleSyncList = () => {
     sortEntities();
+  };
+
+  const getSortIconByFieldName = (fieldName: string) => {
+    const sortFieldName = paginationState.sort;
+    const order = paginationState.order;
+    if (sortFieldName !== fieldName) {
+      return faSort;
+    } else {
+      return order === ASC ? faSortUp : faSortDown;
+    }
   };
 
   return (
@@ -103,16 +111,19 @@ export const Product = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="storeApp.storeProduct.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="storeApp.storeProduct.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                 </th>
                 <th className="hand" onClick={sort('title')}>
-                  <Translate contentKey="storeApp.storeProduct.title">Title</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="storeApp.storeProduct.title">Title</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('title')} />
                 </th>
                 <th className="hand" onClick={sort('price')}>
-                  <Translate contentKey="storeApp.storeProduct.price">Price</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="storeApp.storeProduct.price">Price</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('price')} />
                 </th>
                 <th className="hand" onClick={sort('image')}>
-                  <Translate contentKey="storeApp.storeProduct.image">Image</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="storeApp.storeProduct.image">Image</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('image')} />
                 </th>
                 <th />
               </tr>
@@ -163,8 +174,9 @@ export const Product = () => {
                         </span>
                       </Button>
                       <Button
-                        tag={Link}
-                        to={`/store/product/${product.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        onClick={() =>
+                          (window.location.href = `/store/product/${product.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
+                        }
                         color="danger"
                         size="sm"
                         data-cy="entityDeleteButton"

@@ -2,33 +2,29 @@ import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { byteSize, Translate, TextFormat, getSortState } from 'react-jhipster';
+import { byteSize, Translate, TextFormat, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import { faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IPost } from 'app/shared/model/blog/post.model';
 import { getEntities, reset } from './post.reducer';
 
 export const Post = () => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pageLocation = useLocation();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
   const [sorting, setSorting] = useState(false);
 
   const postList = useAppSelector(state => state.blog.post.entities);
   const loading = useAppSelector(state => state.blog.post.loading);
-  const totalItems = useAppSelector(state => state.blog.post.totalItems);
   const links = useAppSelector(state => state.blog.post.links);
-  const entity = useAppSelector(state => state.blog.post.entity);
   const updateSuccess = useAppSelector(state => state.blog.post.updateSuccess);
 
   const getAllEntities = () => {
@@ -37,7 +33,7 @@ export const Post = () => {
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
-      })
+      }),
     );
   };
 
@@ -95,6 +91,16 @@ export const Post = () => {
     resetAll();
   };
 
+  const getSortIconByFieldName = (fieldName: string) => {
+    const sortFieldName = paginationState.sort;
+    const order = paginationState.order;
+    if (sortFieldName !== fieldName) {
+      return faSort;
+    } else {
+      return order === ASC ? faSortUp : faSortDown;
+    }
+  };
+
   return (
     <div>
       <h2 id="post-heading" data-cy="PostHeading">
@@ -123,16 +129,18 @@ export const Post = () => {
               <thead>
                 <tr>
                   <th className="hand" onClick={sort('id')}>
-                    <Translate contentKey="blogApp.blogPost.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="blogApp.blogPost.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                   </th>
                   <th className="hand" onClick={sort('title')}>
-                    <Translate contentKey="blogApp.blogPost.title">Title</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="blogApp.blogPost.title">Title</Translate>{' '}
+                    <FontAwesomeIcon icon={getSortIconByFieldName('title')} />
                   </th>
                   <th className="hand" onClick={sort('content')}>
-                    <Translate contentKey="blogApp.blogPost.content">Content</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="blogApp.blogPost.content">Content</Translate>{' '}
+                    <FontAwesomeIcon icon={getSortIconByFieldName('content')} />
                   </th>
                   <th className="hand" onClick={sort('date')}>
-                    <Translate contentKey="blogApp.blogPost.date">Date</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="blogApp.blogPost.date">Date</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('date')} />
                   </th>
                   <th>
                     <Translate contentKey="blogApp.blogPost.blog">Blog</Translate> <FontAwesomeIcon icon="sort" />
@@ -166,7 +174,12 @@ export const Post = () => {
                             <Translate contentKey="entity.action.edit">Edit</Translate>
                           </span>
                         </Button>
-                        <Button tag={Link} to={`/blog/post/${post.id}/delete`} color="danger" size="sm" data-cy="entityDeleteButton">
+                        <Button
+                          onClick={() => (window.location.href = `/blog/post/${post.id}/delete`)}
+                          color="danger"
+                          size="sm"
+                          data-cy="entityDeleteButton"
+                        >
                           <FontAwesomeIcon icon="trash" />{' '}
                           <span className="d-none d-md-inline">
                             <Translate contentKey="entity.action.delete">Delete</Translate>

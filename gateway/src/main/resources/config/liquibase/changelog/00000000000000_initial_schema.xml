@@ -6,7 +6,6 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-
     <!--
         JHipster core tables.
         The initial schema has the '00000000000001' id, so that it is over-written if we re-generate it.
@@ -67,29 +66,13 @@
                                  referencedTableName="jhi_user"/>
 
         <loadData
-                  file="config/liquibase/data/user.csv"
-                  separator=";"
-                  tableName="jhi_user"
-                  usePreparedStatements="true">
-            <column name="id" type="string"/>
-            <column name="activated" type="boolean"/>
-            <column name="created_date" type="timestamp"/>
-        </loadData>
-        <dropDefaultValue tableName="jhi_user" columnName="created_date" columnDataType="${datetimeType}"/>
-        <loadData
                   file="config/liquibase/data/authority.csv"
                   separator=";"
                   tableName="jhi_authority"
                   usePreparedStatements="true">
             <column name="name" type="string"/>
         </loadData>
-        <loadData
-                  file="config/liquibase/data/user_authority.csv"
-                  separator=";"
-                  tableName="jhi_user_authority"
-                  usePreparedStatements="true">
-            <column name="user_id" type="string"/>
-        </loadData>
+        <dropDefaultValue tableName="jhi_user" columnName="created_date" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <changeSet author="jhipster" id="00000000000002" context="test">
