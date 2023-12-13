@@ -1,15 +1,15 @@
 # Micro Frontends for Java Microservices Example
 
-This example uses JHipster 7 to generate a micro frontends and reactive microservice architecture. See [Micro Frontends for Java Microservices][blog] to see how it was built.
+This example uses JHipster 8 to generate a micro frontends and reactive microservice architecture. See [Micro Frontends for Java Microservices][blog] to see how it was built.
 
 **Prerequisites:** 
 
-- [Java](https://sdkman.io/) 11+
-- [Node.js](https://nodejs.com/) 16+
+- [Java](https://sdkman.io/) 17+
+- [Node.js](https://nodejs.com/) 18+
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [JHipster](https://www.jhipster.tech/installation/) 7.9.3
+- [JHipster](https://www.jhipster.tech/installation/) 8
 
-> [Auth0](https://auth0.com) is an easy to implement, adaptable authentication and authorization platform.
+> [Auth0](https://auth0.com) is an easy-to-implement, adaptable authentication and authorization platform.
 Basically, we make your login box awesome.
 
 * [Getting Started](#getting-started)
@@ -69,9 +69,8 @@ Edit `docker-compose/central-server-config/application.yml` and append the follo
 ```yaml
 jhipster:
   security:
-    ...
     oauth2:
-      audience: https://dev-06bzs1cu.us.auth0.com/api/v2/
+      audience: https://<your-auth0-domain>/api/v2/
 
 spring:
   security:
